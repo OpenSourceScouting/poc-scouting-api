@@ -1,11 +1,42 @@
+/*
+ * Colors from the public site of Scouting America (scouting.org theme variables). Colors only: no logos,
+ * fonts, or other branding. Text pairs meet WCAG AA contrast. The lighter blue and the green are used only
+ * for non-text accents, because they do not reach 4.5:1 on white.
+ */
 :root {
+  --sa-blue: #003f87; /* primary: headings, buttons (10.2:1 on white) */
+  --sa-navy: #1f4361; /* dark accents */
+  --sa-link: #005696; /* links (7.6:1 on white) */
+  --sa-blue-light: #067eeb; /* focus rings and borders only */
+  --sa-red: #ce1126; /* not current and errors (5.6:1 on white) */
+  --sa-green: #039b03; /* current: accent border only */
+  --sa-gold: #ffb225; /* highlight accent */
+  --sa-text: #212121;
+  --sa-muted: #515354;
+  --sa-surface: #f8f9fa;
+  --sa-border: #dee2e6;
+
   font-family: system-ui, sans-serif;
-  color-scheme: light dark;
+  color: var(--sa-text);
+  background: #ffffff;
+  color-scheme: light;
+}
+/* Keep the hidden attribute effective on elements that set display (for example the positions fieldset). */
+[hidden] {
+  display: none !important;
 }
 main {
   max-width: 40rem;
   margin: 3rem auto;
   padding: 0 1rem;
+}
+h1 {
+  color: var(--sa-blue);
+  border-bottom: 4px solid var(--sa-gold);
+  padding-bottom: 0.5rem;
+}
+a {
+  color: var(--sa-link);
 }
 form {
   display: grid;
@@ -14,31 +45,71 @@ form {
 label {
   display: grid;
   gap: 0.25rem;
+  color: var(--sa-navy);
+  font-weight: 600;
+}
+input,
+select {
+  font: inherit;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--sa-border);
+  border-radius: 4px;
+  color: var(--sa-text);
+  background: #ffffff;
+}
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--sa-blue-light);
+  outline-offset: 2px;
+}
+button {
+  font: inherit;
+  font-weight: 600;
+  justify-self: start;
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  background: var(--sa-blue);
+  cursor: pointer;
+}
+button:hover {
+  background: var(--sa-navy);
 }
 fieldset {
   display: grid;
   gap: 0.75rem;
-  border: 1px solid #8884;
+  border: 1px solid var(--sa-border);
+  border-radius: 4px;
 }
 .hint {
   font-size: 0.9em;
-  opacity: 0.8;
+  color: var(--sa-muted);
 }
 output {
   display: block;
   margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
   white-space: pre-wrap;
   font-family: ui-monospace, monospace;
+  background: var(--sa-surface);
+  border-left: 4px solid var(--sa-border);
+}
+output:empty {
+  display: none;
 }
 .current {
-  color: #1e8449;
+  border-left-color: var(--sa-green);
 }
 .notCurrent,
 .problem {
-  color: #c0392b;
+  color: var(--sa-red);
+  border-left-color: var(--sa-red);
 }
 .about {
-  border-left: 3px solid #8888;
+  border-left: 4px solid var(--sa-blue);
+  background: var(--sa-surface);
   padding: 0.25rem 1rem;
   margin-bottom: 1.5rem;
   font-size: 0.95em;

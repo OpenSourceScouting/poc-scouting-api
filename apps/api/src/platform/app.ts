@@ -34,6 +34,7 @@ const DOCS_HTML = `<!doctype html>
     <title>Scouting API docs</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="/docs/vendor/swagger-ui.css" />
+    <link rel="stylesheet" href="/docs/theme.css" />
   </head>
   <body>
     <div id="swagger-ui"></div>
