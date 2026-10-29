@@ -352,12 +352,12 @@ signing key. The command `npm run dev:token -w @scouting/api` makes a sign-in to
 
 The API has four environments:
 
-| Environment | Runtime                                     | Database                                                 | Deployed by                    |
-| ----------- | ------------------------------------------- | -------------------------------------------------------- | ------------------------------ |
-| Local       | `wrangler dev` (the real `workerd` runtime) | SQLite on disk                                           | The developer                  |
-| Test        | Vitest in `workerd`                         | A new D1 database for each run, cleared before each test | `npm test`                     |
-| Staging     | Worker `scouting-api-staging`               | D1 `scouting-api-staging`                                | CI, after a merge to `main`    |
-| Production  | Worker `scouting-api-production`            | D1 `scouting-api-production`                             | A manual start of the workflow |
+| Environment | Runtime                                     | Database                                                 | Deployed by                               |
+| ----------- | ------------------------------------------- | -------------------------------------------------------- | ----------------------------------------- |
+| Local       | `wrangler dev` (the real `workerd` runtime) | SQLite on disk                                           | The developer                             |
+| Test        | Vitest in `workerd`                         | A new D1 database for each run, cleared before each test | `npm test`                                |
+| Staging     | Worker `scouting-api-staging`               | D1 `scouting-api-staging`                                | A manual start of the workflow (disabled) |
+| Production  | Worker `scouting-api-production`            | D1 `scouting-api-production`                             | A manual start of the workflow (disabled) |
 
 The infrastructure has two tools, divided by how long each item lasts (see
 [ADR 0002](adr/0002-iac-split-opentofu-and-wrangler.md)). OpenTofu creates the D1 databases, with

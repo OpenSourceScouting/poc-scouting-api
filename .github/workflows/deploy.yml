@@ -1,8 +1,9 @@
 name: Deploy
 
+# Deployment is disabled: there is no hosting infrastructure yet, and the hosting platform for step 2 (Walk)
+# is not decided. The workflow does not run on push. A manual start also skips the job until a repository
+# administrator sets the repository variable DEPLOY_ENABLED to "true".
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
@@ -16,6 +17,7 @@ permissions:
 
 jobs:
   deploy:
+    if: vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
     # Configure required reviewers on the "production" GitHub environment for a manual gate.
     environment: ${{ inputs.environment || 'staging' }}

@@ -87,14 +87,19 @@ Do these steps one time.
 
 ## How a release deploys
 
-When you merge a change to `main`, the workflow `.github/workflows/deploy.yml` deploys to staging. The workflow
-does these steps:
+> **Note:** Deployment is disabled. There is no hosting infrastructure yet, and the hosting platform for step 2
+> (Walk) is not decided. The workflow does not run on a push to `main`. A manual start skips the job until a
+> repository administrator sets the repository variable `DEPLOY_ENABLED` to `true`. Do the steps in
+> [Set up the environments](#set-up-the-environments) first.
+
+When deployment is enabled, start the workflow `.github/workflows/deploy.yml` manually and select an
+environment. The workflow does these steps:
 
 1. It runs the tests.
 2. It applies the D1 migrations to the remote database (`wrangler d1 migrations apply --remote`).
 3. It runs `npm run deploy:staging`, which copies Swagger UI into the static assets and deploys the Worker.
 
-To deploy to production, start the same workflow manually and select `production`.
+To deploy to production, select `production` when you start the workflow.
 
 ## Host the sample frontend
 

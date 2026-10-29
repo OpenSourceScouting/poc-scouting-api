@@ -16,3 +16,6 @@ infra/tofu/backend.hcl
 apps/api/.dev-oauth-private.jwk.json
 apps/api/seed/seed.sql
 apps/api/public/docs/vendor/
+
+# Local only: open work, including unfixed security findings. Not for the repository.
+TODO.md

@@ -45,7 +45,7 @@ Architecture: `docs/architecture.md`. API rules: `docs/api-guidelines.md`. Decis
 - Workers native tracing and invocation logs are off on purpose (they record full URLs and SQL); see ADR 0008
 - Cloudflare Terraform provider is v5: check schemas at the pinned tag (`docs/resources/*.md` at v5.28.1); one ruleset per zone per phase
 - Docker and oasdiff are not available locally; `oasdiff` runs only in CI
-- Nothing is deployed; never run `tofu apply`, `wrangler deploy`, or `wrangler secret put` without explicit approval
+- Nothing is deployed, and the deploy workflow is disabled (manual only, gated by the `DEPLOY_ENABLED` repository variable); never run `tofu apply`, `wrangler deploy`, or `wrangler secret put` without explicit approval
 
 ## Docs style
 

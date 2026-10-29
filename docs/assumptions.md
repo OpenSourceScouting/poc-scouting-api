@@ -16,7 +16,7 @@ The table gives each open question, the assumption, and the location:
 | Expiry time zone            | The sync changes source dates to UTC times before it loads them. The API does not change time zones.                                                              | The sync (not built)                                     |
 | Data freshness              | `asOf` is one value for the full dataset, in the table `sync_state`                                                                                               | `migrations/0001_platform_sync_state.sql`                |
 | Sign-in                     | A JSON Web Token (JWT) with the `positions:read` scope. The identity provider gives this scope only to registered adults.                                         | ADR 0007                                                 |
-| Hosting platform for Walk   | Cloudflare Workers and D1, as in the proof of concept. National IT can select a different platform.                                                               | ADR 0001, `TODO.md`                                      |
+| Hosting platform for Walk   | Cloudflare Workers and D1, as in the proof of concept. National IT can select a different platform.                                                               | ADR 0001                                                 |
 | Opt-out                     | The tables do not contain an adult who opts out, so the answers are `notCurrent`                                                                                  | The sync (not built)                                     |
 
 ## Work that is not in this repository
