@@ -69,7 +69,7 @@ export function createApp(modules: readonly FeatureModule[]): OpenAPIHono<AppEnv
     const allow = new URL(c.req.url).pathname.startsWith(API_PREFIX) ? ALLOW_API : ALLOW_OPS;
     if (c.req.method === 'OPTIONS') return c.body(null, 204, { Allow: allow });
     if (!allow.startsWith(c.req.method)) {
-      return problemResponse(c, 405, 'methodNotAllowed', 'Method not allowed', `Use one of these methods: ${allow}.`, {
+      return problemResponse(c, 'methodNotAllowed', `Use one of these methods: ${allow}.`, {
         Allow: allow,
       });
     }
@@ -78,36 +78,18 @@ export function createApp(modules: readonly FeatureModule[]): OpenAPIHono<AppEnv
   // API bodies: JSON only, small, well formed. Parsed once here; validators reuse Hono's body cache.
   app.use(`${API_PREFIX}*`, async (c, next) => {
     if (!/^application\/json\s*(;|$)/i.test(c.req.header('Content-Type') ?? '')) {
-      return problemResponse(
-        c,
-        415,
-        'unsupportedMediaType',
-        'Unsupported media type',
-        'Set Content-Type to application/json.',
-      );
+      return problemResponse(c, 'unsupportedMediaType', 'Set Content-Type to application/json.');
     }
     if (
       Number(c.req.header('Content-Length') ?? 0) > MAX_BODY_BYTES ||
       (await c.req.raw.clone().arrayBuffer()).byteLength > MAX_BODY_BYTES
     ) {
-      return problemResponse(
-        c,
-        413,
-        'payloadTooLarge',
-        'Payload too large',
-        `The maximum size of a request body is ${MAX_BODY_BYTES} bytes.`,
-      );
+      return problemResponse(c, 'payloadTooLarge', `The maximum size of a request body is ${MAX_BODY_BYTES} bytes.`);
     }
     try {
       await c.req.json();
     } catch {
-      return problemResponse(
-        c,
-        400,
-        'invalidRequestBody',
-        'Invalid request body',
-        'The request body is not valid JSON.',
-      );
+      return problemResponse(c, 'invalidRequestBody', 'The request body is not valid JSON.');
     }
     await next();
   });
@@ -119,9 +101,7 @@ export function createApp(modules: readonly FeatureModule[]): OpenAPIHono<AppEnv
     if (!success) {
       return problemResponse(
         c,
-        429,
         'rateLimited',
-        'Too many requests',
         'There were too many checks about this member ID. Wait, then send the check again.',
         {
           'Retry-After': '60',
@@ -162,14 +142,14 @@ export function createApp(modules: readonly FeatureModule[]): OpenAPIHono<AppEnv
     return c.json({ ...app.getOpenAPI31Document(openApiConfig(modules)), servers: [...here, PRODUCTION_SERVER] });
   });
 
-  app.notFound((c) => problemResponse(c, 404, 'notFound', 'Not found', 'The path does not exist.'));
+  app.notFound((c) => problemResponse(c, 'notFound', 'The path does not exist.'));
   app.onError((err, c) => {
     if (err instanceof ProblemError) {
-      return problemResponse(c, err.status, err.slug, err.title, err.message, err.headers);
+      return problemResponse(c, err.slug, err.message, err.headers);
     }
     // Do not log the URL or the body. The body contains lastName.
     log(c, 'ERROR', 'unhandled error', { 'exception.type': err.name, 'exception.message': err.message });
-    return problemResponse(c, 500, 'internalError', 'Internal server error');
+    return problemResponse(c, 'internalError');
   });
 
   return app;

@@ -101,22 +101,34 @@
         "properties": {
           "type": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "description": "A URI that identifies the problem type. Use `type`, not `title` or `detail`, to decide what to do. The examples of each response show its problem types. New types can occur.",
+            "example": "https://api.example.scouting.org/problems/invalidMemberId"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "description": "A short summary of the problem type. It is the same for each occurrence of the type.",
+            "example": "Invalid member ID"
           },
           "status": {
-            "type": "integer"
+            "type": "integer",
+            "description": "The HTTP status code.",
+            "example": 400
           },
           "detail": {
-            "type": "string"
+            "type": "string",
+            "description": "An explanation of this occurrence, for a person. Do not parse it.",
+            "example": "scoutingMemberId must contain digits only."
           },
           "instance": {
-            "type": "string"
+            "type": "string",
+            "description": "The path of the request.",
+            "example": "/v1/adults/abc/ypt"
           },
           "requestId": {
-            "type": "string"
+            "type": "string",
+            "description": "The request ID. Give it when you report a problem.",
+            "example": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
           }
         },
         "required": [
@@ -285,10 +297,45 @@
             }
           },
           "400": {
-            "description": "An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data.",
+            "description": "An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data. Use `type` to find the field: the examples give each type.",
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "invalidMemberId": {
+                    "summary": "Invalid member ID",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidMemberId",
+                      "title": "Invalid member ID",
+                      "status": 400,
+                      "detail": "scoutingMemberId must contain digits only.",
+                      "instance": "/v1/adults/abc/ypt",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  },
+                  "invalidLastName": {
+                    "summary": "Missing last name",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidLastName",
+                      "title": "Invalid last name",
+                      "status": 400,
+                      "detail": "lastName is required.",
+                      "instance": "/v1/adults/123456789/ypt",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  },
+                  "invalidRequestBody": {
+                    "summary": "Body is not valid JSON",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidRequestBody",
+                      "title": "Invalid request body",
+                      "status": 400,
+                      "detail": "The request body is not valid JSON.",
+                      "instance": "/v1/adults/123456789/ypt",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -300,6 +347,19 @@
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "payloadTooLarge": {
+                    "summary": "Payload too large",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/payloadTooLarge",
+                      "title": "Payload too large",
+                      "status": 413,
+                      "detail": "The maximum size of a request body is 1024 bytes.",
+                      "instance": "/v1/adults/123456789/ypt",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -311,6 +371,19 @@
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "unsupportedMediaType": {
+                    "summary": "Unsupported media type",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/unsupportedMediaType",
+                      "title": "Unsupported media type",
+                      "status": 415,
+                      "detail": "Set Content-Type to application/json.",
+                      "instance": "/v1/adults/123456789/ypt",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -318,7 +391,7 @@
             }
           },
           "429": {
-            "description": "Too many requests: from this client (CDN limit), or about this member ID (platform limit).",
+            "description": "Too many checks about this member ID (the platform limit). The example shows this response. If the CDN limit for each client stops the request, Cloudflare sends its own response, which is not a problem body.",
             "headers": {
               "Retry-After": {
                 "description": "The number of seconds to wait before you send the request again.",
@@ -329,6 +402,19 @@
             },
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "rateLimited": {
+                    "summary": "Too many requests",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/rateLimited",
+                      "title": "Too many requests",
+                      "status": 429,
+                      "detail": "There were too many checks about this member ID. Wait, then send the check again.",
+                      "instance": "/v1/adults/123456789/ypt",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -336,10 +422,22 @@
             }
           },
           "500": {
-            "description": "Our fault.",
+            "description": "An unexpected error in the API. Report the requestId.",
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "internalError": {
+                    "summary": "Internal server error",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/internalError",
+                      "title": "Internal server error",
+                      "status": 500,
+                      "instance": "/v1/adults/123456789/ypt",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -347,7 +445,7 @@
             }
           },
           "503": {
-            "description": "The API is not available for a short time, for example during maintenance.",
+            "description": "The API is not available for a short time, for example during maintenance. Wait for Retry-After.",
             "headers": {
               "Retry-After": {
                 "description": "The number of seconds to wait before you send the request again.",
@@ -358,6 +456,19 @@
             },
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "serviceUnavailable": {
+                    "summary": "Service unavailable",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/serviceUnavailable",
+                      "title": "Service unavailable",
+                      "status": 503,
+                      "detail": "The API is closed for maintenance. Send the request again later.",
+                      "instance": "/v1/adults/123456789/ypt",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -447,10 +558,45 @@
             }
           },
           "400": {
-            "description": "An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data.",
+            "description": "An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data. Use `type` to find the field: the examples give each type.",
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "invalidMemberId": {
+                    "summary": "Invalid member ID",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidMemberId",
+                      "title": "Invalid member ID",
+                      "status": 400,
+                      "detail": "scoutingMemberId must contain digits only.",
+                      "instance": "/v1/adults/abc/membership",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  },
+                  "invalidLastName": {
+                    "summary": "Missing last name",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidLastName",
+                      "title": "Invalid last name",
+                      "status": 400,
+                      "detail": "lastName is required.",
+                      "instance": "/v1/adults/123456789/membership",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  },
+                  "invalidRequestBody": {
+                    "summary": "Body is not valid JSON",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidRequestBody",
+                      "title": "Invalid request body",
+                      "status": 400,
+                      "detail": "The request body is not valid JSON.",
+                      "instance": "/v1/adults/123456789/membership",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -462,6 +608,19 @@
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "payloadTooLarge": {
+                    "summary": "Payload too large",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/payloadTooLarge",
+                      "title": "Payload too large",
+                      "status": 413,
+                      "detail": "The maximum size of a request body is 1024 bytes.",
+                      "instance": "/v1/adults/123456789/membership",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -473,6 +632,19 @@
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "unsupportedMediaType": {
+                    "summary": "Unsupported media type",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/unsupportedMediaType",
+                      "title": "Unsupported media type",
+                      "status": 415,
+                      "detail": "Set Content-Type to application/json.",
+                      "instance": "/v1/adults/123456789/membership",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -480,7 +652,7 @@
             }
           },
           "429": {
-            "description": "Too many requests: from this client (CDN limit), or about this member ID (platform limit).",
+            "description": "Too many checks about this member ID (the platform limit). The example shows this response. If the CDN limit for each client stops the request, Cloudflare sends its own response, which is not a problem body.",
             "headers": {
               "Retry-After": {
                 "description": "The number of seconds to wait before you send the request again.",
@@ -491,6 +663,19 @@
             },
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "rateLimited": {
+                    "summary": "Too many requests",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/rateLimited",
+                      "title": "Too many requests",
+                      "status": 429,
+                      "detail": "There were too many checks about this member ID. Wait, then send the check again.",
+                      "instance": "/v1/adults/123456789/membership",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -498,10 +683,22 @@
             }
           },
           "500": {
-            "description": "Our fault.",
+            "description": "An unexpected error in the API. Report the requestId.",
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "internalError": {
+                    "summary": "Internal server error",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/internalError",
+                      "title": "Internal server error",
+                      "status": 500,
+                      "instance": "/v1/adults/123456789/membership",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -509,7 +706,7 @@
             }
           },
           "503": {
-            "description": "The API is not available for a short time, for example during maintenance.",
+            "description": "The API is not available for a short time, for example during maintenance. Wait for Retry-After.",
             "headers": {
               "Retry-After": {
                 "description": "The number of seconds to wait before you send the request again.",
@@ -520,6 +717,19 @@
             },
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "serviceUnavailable": {
+                    "summary": "Service unavailable",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/serviceUnavailable",
+                      "title": "Service unavailable",
+                      "status": 503,
+                      "detail": "The API is closed for maintenance. Send the request again later.",
+                      "instance": "/v1/adults/123456789/membership",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -641,10 +851,56 @@
             }
           },
           "400": {
-            "description": "An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data.",
+            "description": "An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data. Use `type` to find the field: the examples give each type.",
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "invalidMemberId": {
+                    "summary": "Invalid member ID",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidMemberId",
+                      "title": "Invalid member ID",
+                      "status": 400,
+                      "detail": "scoutingMemberId must contain digits only.",
+                      "instance": "/v1/adults/abc/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  },
+                  "invalidOrganizationId": {
+                    "summary": "Invalid organization ID",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidOrganizationId",
+                      "title": "Invalid organization ID",
+                      "status": 400,
+                      "detail": "organizationId must contain only letters, digits, and hyphens.",
+                      "instance": "/v1/adults/123456789/organizations/bad_org!/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  },
+                  "invalidLastName": {
+                    "summary": "Missing last name",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidLastName",
+                      "title": "Invalid last name",
+                      "status": 400,
+                      "detail": "lastName is required.",
+                      "instance": "/v1/adults/123456789/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  },
+                  "invalidRequestBody": {
+                    "summary": "Body is not valid JSON",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/invalidRequestBody",
+                      "title": "Invalid request body",
+                      "status": 400,
+                      "detail": "The request body is not valid JSON.",
+                      "instance": "/v1/adults/123456789/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -663,6 +919,19 @@
             },
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/unauthorized",
+                      "title": "Unauthorized",
+                      "status": 401,
+                      "detail": "A valid sign-in token is required.",
+                      "instance": "/v1/adults/123456789/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -681,6 +950,19 @@
             },
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "forbidden": {
+                    "summary": "Forbidden",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/forbidden",
+                      "title": "Forbidden",
+                      "status": 403,
+                      "detail": "This sign-in is not allowed to make this check.",
+                      "instance": "/v1/adults/123456789/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -692,6 +974,19 @@
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "payloadTooLarge": {
+                    "summary": "Payload too large",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/payloadTooLarge",
+                      "title": "Payload too large",
+                      "status": 413,
+                      "detail": "The maximum size of a request body is 1024 bytes.",
+                      "instance": "/v1/adults/123456789/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -703,6 +998,19 @@
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "unsupportedMediaType": {
+                    "summary": "Unsupported media type",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/unsupportedMediaType",
+                      "title": "Unsupported media type",
+                      "status": 415,
+                      "detail": "Set Content-Type to application/json.",
+                      "instance": "/v1/adults/123456789/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -710,7 +1018,7 @@
             }
           },
           "429": {
-            "description": "Too many requests: from this client (CDN limit), or about this member ID (platform limit).",
+            "description": "Too many checks about this member ID (the platform limit). The example shows this response. If the CDN limit for each client stops the request, Cloudflare sends its own response, which is not a problem body.",
             "headers": {
               "Retry-After": {
                 "description": "The number of seconds to wait before you send the request again.",
@@ -721,6 +1029,19 @@
             },
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "rateLimited": {
+                    "summary": "Too many requests",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/rateLimited",
+                      "title": "Too many requests",
+                      "status": 429,
+                      "detail": "There were too many checks about this member ID. Wait, then send the check again.",
+                      "instance": "/v1/adults/123456789/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -728,10 +1049,22 @@
             }
           },
           "500": {
-            "description": "Our fault.",
+            "description": "An unexpected error in the API. Report the requestId.",
             "headers": {},
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "internalError": {
+                    "summary": "Internal server error",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/internalError",
+                      "title": "Internal server error",
+                      "status": 500,
+                      "instance": "/v1/adults/123456789/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }
@@ -739,7 +1072,7 @@
             }
           },
           "503": {
-            "description": "The API is not available for a short time, for example during maintenance.",
+            "description": "The API is not available for a short time, for example during maintenance. Wait for Retry-After.",
             "headers": {
               "Retry-After": {
                 "description": "The number of seconds to wait before you send the request again.",
@@ -750,6 +1083,19 @@
             },
             "content": {
               "application/problem+json": {
+                "examples": {
+                  "serviceUnavailable": {
+                    "summary": "Service unavailable",
+                    "value": {
+                      "type": "https://api.example.scouting.org/problems/serviceUnavailable",
+                      "title": "Service unavailable",
+                      "status": 503,
+                      "detail": "The API is closed for maintenance. Send the request again later.",
+                      "instance": "/v1/adults/123456789/organizations/4f1c2a90/positions",
+                      "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
+                    }
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
                 }

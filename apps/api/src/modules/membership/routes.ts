@@ -21,7 +21,11 @@ const checkMembership = createRoute({
   summary: 'Checks whether an adult is registered, and until when',
   request: { params: z.object({ scoutingMemberId: ScoutingMemberIdParam }), body: checkBody(CheckRequestSchema) },
   security: [],
-  responses: checkResponses(CheckAnswerSchema, { signedIn: false, examples: SINGLE_RECORD_EXAMPLES }),
+  responses: checkResponses(CheckAnswerSchema, {
+    signedIn: false,
+    examples: SINGLE_RECORD_EXAMPLES,
+    path: '/v1/adults/{scoutingMemberId}/membership',
+  }),
 });
 
 export const membershipRoutes = createModuleRouter().openapi(checkMembership, async (c) => {

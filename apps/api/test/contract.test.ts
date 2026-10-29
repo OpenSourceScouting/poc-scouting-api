@@ -1,6 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import committed from '../../../openapi/openapi.json';
+import { bearer, signInToken } from './auth';
 import { api } from './http';
+import { checkRequest } from './open-adult-check';
+import { PROBLEM_BASE, PROBLEM_TYPES } from '../src/platform/problem';
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- walking an arbitrary JSON document */
 type Doc = any;
@@ -155,6 +158,79 @@ describe('OpenAPI contract', () => {
     ).toEqual([]);
     expect(schema('Status').description).toMatch(/does not say which/i);
     expect(doc.info.description).toMatch(/000000001/);
+  });
+
+  it('gives each error response a realistic example with a real problem type', () => {
+    for (const id of OPERATIONS) {
+      for (const [code, response] of Object.entries(op(id).responses) as [string, Doc][]) {
+        if (Number(code) < 400) continue;
+        const examples = Object.values(response.content['application/problem+json'].examples ?? {}) as Doc[];
+        expect(examples.length, `${id} ${code}`).toBeGreaterThan(0);
+        for (const { value } of examples) {
+          const slug = value.type.replace(`${PROBLEM_BASE}/`, '');
+          expect(PROBLEM_TYPES, `${id} ${code} ${slug}`).toHaveProperty(slug);
+          expect(value, `${id} ${code}`).toMatchObject({
+            status: Number(code),
+            title: PROBLEM_TYPES[slug as keyof typeof PROBLEM_TYPES].title,
+          });
+        }
+      }
+    }
+    const badRequest = Object.keys(op('checkPositions').responses['400'].content['application/problem+json'].examples);
+    expect(badRequest.sort()).toEqual([
+      'invalidLastName',
+      'invalidMemberId',
+      'invalidOrganizationId',
+      'invalidRequestBody',
+    ]);
+  });
+
+  it('documents error examples that match what the API really sends', async () => {
+    const token = await signInToken();
+    const noScope = await signInToken({ scope: 'openid' });
+    let rateLimitId = 910000000;
+    for (const id of OPERATIONS) {
+      const [template] = operations()
+        .find(([, , o]) => o.operationId === id)![0]
+        .split(' ')
+        .slice(1);
+      const path = (member = '123456789', org = 'unit-1') =>
+        template!.replace('{scoutingMemberId}', member).replace('{organizationId}', org);
+      const auth = SIGNED_IN.includes(id) ? bearer(token) : {};
+      const trigger: Record<string, () => Promise<Response>> = {
+        invalidMemberId: () => api(path('abc'), checkRequest({ lastName: 'Rivera' }, auth)),
+        invalidOrganizationId: () => api(path('123456789', 'bad_org!'), checkRequest({ lastName: 'Rivera' }, auth)),
+        invalidLastName: () => api(path(), checkRequest({}, auth)),
+        invalidRequestBody: () => api(path(), checkRequest('{"lastName": ', auth)),
+        unauthorized: () => api(path(), checkRequest({ lastName: 'Rivera' })),
+        forbidden: () => api(path(), checkRequest({ lastName: 'Rivera' }, bearer(noScope))),
+        payloadTooLarge: () => api(path(), checkRequest({ lastName: 'x'.repeat(2048) }, auth)),
+        unsupportedMediaType: () =>
+          api(path(), { method: 'POST', headers: { ...auth, 'Content-Type': 'text/plain' }, body: 'Rivera' }),
+        rateLimited: async () => {
+          const member = String(rateLimitId++);
+          for (let i = 0; i < 50; i++) await api(path(member), checkRequest({ lastName: 'Rivera' }, auth));
+          return api(path(member), checkRequest({ lastName: 'Rivera' }, auth));
+        },
+        // sync_state is empty (tables are wiped before each test), so a valid check fails inside the API.
+        internalError: () => api(path(), checkRequest({ lastName: 'Rivera' }, auth)),
+      };
+      for (const [code, response] of Object.entries(op(id).responses) as [string, Doc][]) {
+        // 503 is for planned maintenance; no code path sends it yet.
+        if (Number(code) < 400 || code === '503') continue;
+        for (const { value } of Object.values(response.content['application/problem+json'].examples) as Doc[]) {
+          const slug = value.type.replace(`${PROBLEM_BASE}/`, '');
+          const res = await trigger[slug]!();
+          const { type, title, status, detail } = await res.json<Doc>();
+          expect({ type, title, status, detail }, `${id} ${code} ${slug}`).toEqual({
+            type: value.type,
+            title: value.title,
+            status: value.status,
+            detail: value.detail,
+          });
+        }
+      }
+    }
   });
 
   it('marks open checks as open and positions as signed in with positions:read', () => {

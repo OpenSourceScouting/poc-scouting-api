@@ -83,12 +83,36 @@ export interface components {
         Status: ("current" | "notCurrent") | string;
         /** @description An error in the RFC 9457 Problem Details format. */
         Problem: {
-            /** Format: uri */
+            /**
+             * Format: uri
+             * @description A URI that identifies the problem type. Use `type`, not `title` or `detail`, to decide what to do. The examples of each response show its problem types. New types can occur.
+             * @example https://api.example.scouting.org/problems/invalidMemberId
+             */
             type: string;
+            /**
+             * @description A short summary of the problem type. It is the same for each occurrence of the type.
+             * @example Invalid member ID
+             */
             title: string;
+            /**
+             * @description The HTTP status code.
+             * @example 400
+             */
             status: number;
+            /**
+             * @description An explanation of this occurrence, for a person. Do not parse it.
+             * @example scoutingMemberId must contain digits only.
+             */
             detail?: string;
+            /**
+             * @description The path of the request.
+             * @example /v1/adults/abc/ypt
+             */
             instance?: string;
+            /**
+             * @description The request ID. Give it when you report a problem.
+             * @example 3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61
+             */
             requestId?: string;
         };
         CheckRequest: {
@@ -165,7 +189,7 @@ export interface operations {
                     "application/json": components["schemas"]["CheckAnswer"];
                 };
             };
-            /** @description An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data. */
+            /** @description An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data. Use `type` to find the field: the examples give each type. */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -192,7 +216,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Too many requests: from this client (CDN limit), or about this member ID (platform limit). */
+            /** @description Too many checks about this member ID (the platform limit). The example shows this response. If the CDN limit for each client stops the request, Cloudflare sends its own response, which is not a problem body. */
             429: {
                 headers: {
                     /** @description The number of seconds to wait before you send the request again. */
@@ -203,7 +227,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Our fault. */
+            /** @description An unexpected error in the API. Report the requestId. */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -212,7 +236,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description The API is not available for a short time, for example during maintenance. */
+            /** @description The API is not available for a short time, for example during maintenance. Wait for Retry-After. */
             503: {
                 headers: {
                     /** @description The number of seconds to wait before you send the request again. */
@@ -254,7 +278,7 @@ export interface operations {
                     "application/json": components["schemas"]["CheckAnswer"];
                 };
             };
-            /** @description An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data. */
+            /** @description An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data. Use `type` to find the field: the examples give each type. */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -281,7 +305,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Too many requests: from this client (CDN limit), or about this member ID (platform limit). */
+            /** @description Too many checks about this member ID (the platform limit). The example shows this response. If the CDN limit for each client stops the request, Cloudflare sends its own response, which is not a problem body. */
             429: {
                 headers: {
                     /** @description The number of seconds to wait before you send the request again. */
@@ -292,7 +316,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Our fault. */
+            /** @description An unexpected error in the API. Report the requestId. */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -301,7 +325,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description The API is not available for a short time, for example during maintenance. */
+            /** @description The API is not available for a short time, for example during maintenance. Wait for Retry-After. */
             503: {
                 headers: {
                     /** @description The number of seconds to wait before you send the request again. */
@@ -345,7 +369,7 @@ export interface operations {
                     "application/json": components["schemas"]["PositionsAnswer"];
                 };
             };
-            /** @description An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data. */
+            /** @description An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data. Use `type` to find the field: the examples give each type. */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -394,7 +418,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Too many requests: from this client (CDN limit), or about this member ID (platform limit). */
+            /** @description Too many checks about this member ID (the platform limit). The example shows this response. If the CDN limit for each client stops the request, Cloudflare sends its own response, which is not a problem body. */
             429: {
                 headers: {
                     /** @description The number of seconds to wait before you send the request again. */
@@ -405,7 +429,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Our fault. */
+            /** @description An unexpected error in the API. Report the requestId. */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -414,7 +438,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description The API is not available for a short time, for example during maintenance. */
+            /** @description The API is not available for a short time, for example during maintenance. Wait for Retry-After. */
             503: {
                 headers: {
                     /** @description The number of seconds to wait before you send the request again. */

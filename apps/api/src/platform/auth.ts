@@ -20,7 +20,7 @@ function keySet(env: Bindings): JWTVerifyGetKey {
 }
 
 const unauthorized = (challenge: string) =>
-  new ProblemError(401, 'unauthorized', 'Unauthorized', 'A valid sign-in token is required.', {
+  new ProblemError('unauthorized', 'A valid sign-in token is required.', {
     'WWW-Authenticate': challenge,
   });
 
@@ -47,7 +47,7 @@ export function requireSignIn(scope: string): MiddlewareHandler<AppEnv> {
     }
 
     if (!granted.includes(scope)) {
-      throw new ProblemError(403, 'forbidden', 'Forbidden', 'This sign-in is not allowed to make this check.', {
+      throw new ProblemError('forbidden', 'This sign-in is not allowed to make this check.', {
         'WWW-Authenticate': `${REALM}, error="insufficient_scope", scope="${scope}"`,
       });
     }

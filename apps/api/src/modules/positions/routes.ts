@@ -30,6 +30,7 @@ const checkPositions = createRoute({
   security: [{ scoutingSignIn: ['positions:read'] }],
   responses: checkResponses(PositionsAnswerSchema, {
     signedIn: true,
+    path: '/v1/adults/{scoutingMemberId}/organizations/{organizationId}/positions',
     examples: {
       current: {
         scoutingMemberId: '000000001',

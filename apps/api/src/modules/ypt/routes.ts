@@ -21,7 +21,11 @@ const checkYptStatus = createRoute({
   summary: 'Checks whether an adult has current Youth Protection Training (YPT), and until when',
   request: { params: z.object({ scoutingMemberId: ScoutingMemberIdParam }), body: checkBody(CheckRequestSchema) },
   security: [],
-  responses: checkResponses(CheckAnswerSchema, { signedIn: false, examples: SINGLE_RECORD_EXAMPLES }),
+  responses: checkResponses(CheckAnswerSchema, {
+    signedIn: false,
+    examples: SINGLE_RECORD_EXAMPLES,
+    path: '/v1/adults/{scoutingMemberId}/ypt',
+  }),
 });
 
 export const yptRoutes = createModuleRouter().openapi(checkYptStatus, async (c) => {

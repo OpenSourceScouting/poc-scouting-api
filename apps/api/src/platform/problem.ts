@@ -16,26 +16,47 @@ export interface Problem {
 
 export const PROBLEM_BASE = 'https://api.example.scouting.org/problems';
 
+/**
+ * The catalog of problem types. Each type has one status code and one title. The code raises errors from this
+ * catalog, and the OpenAPI document builds its error examples from it, so the two cannot differ.
+ */
+export const PROBLEM_TYPES = {
+  invalidMemberId: { status: 400, title: 'Invalid member ID' },
+  invalidOrganizationId: { status: 400, title: 'Invalid organization ID' },
+  invalidLastName: { status: 400, title: 'Invalid last name' },
+  invalidRequestBody: { status: 400, title: 'Invalid request body' },
+  invalidRequest: { status: 400, title: 'Invalid request' },
+  unauthorized: { status: 401, title: 'Unauthorized' },
+  forbidden: { status: 403, title: 'Forbidden' },
+  notFound: { status: 404, title: 'Not found' },
+  methodNotAllowed: { status: 405, title: 'Method not allowed' },
+  payloadTooLarge: { status: 413, title: 'Payload too large' },
+  unsupportedMediaType: { status: 415, title: 'Unsupported media type' },
+  rateLimited: { status: 429, title: 'Too many requests' },
+  internalError: { status: 500, title: 'Internal server error' },
+  serviceUnavailable: { status: 503, title: 'Service unavailable' },
+} as const satisfies Record<string, { status: ContentfulStatusCode; title: string }>;
+
+export type ProblemSlug = keyof typeof PROBLEM_TYPES;
+
+/** An error that the API sends as a problem response. Throw it from a handler or middleware. */
 export class ProblemError extends Error {
   constructor(
-    readonly status: ContentfulStatusCode,
-    readonly slug: string,
-    readonly title: string,
+    readonly slug: ProblemSlug,
     detail?: string,
     readonly headers: Record<string, string> = {},
   ) {
-    super(detail ?? title);
+    super(detail ?? PROBLEM_TYPES[slug].title);
   }
 }
 
 export function problemResponse(
   c: Context,
-  status: ContentfulStatusCode,
-  slug: string,
-  title: string,
+  slug: ProblemSlug,
   detail?: string,
   headers: Record<string, string> = {},
 ): Response {
+  const { status, title } = PROBLEM_TYPES[slug];
   const body: Problem = {
     type: `${PROBLEM_BASE}/${slug}`,
     title,
@@ -48,12 +69,12 @@ export function problemResponse(
 }
 
 /** The problem type for each request field. Callers can use `type` and do not have to parse `detail`. */
-const FIELD_PROBLEMS: Record<string, { slug: string; title: string }> = {
-  scoutingMemberId: { slug: 'invalidMemberId', title: 'Invalid member ID' },
-  organizationId: { slug: 'invalidOrganizationId', title: 'Invalid organization ID' },
-  lastName: { slug: 'invalidLastName', title: 'Invalid last name' },
+const FIELD_PROBLEMS: Record<string, ProblemSlug> = {
+  scoutingMemberId: 'invalidMemberId',
+  organizationId: 'invalidOrganizationId',
+  lastName: 'invalidLastName',
   // An issue with an empty path is about the body as a whole (for example, an array instead of an object).
-  '': { slug: 'invalidRequestBody', title: 'Invalid request body' },
+  '': 'invalidRequestBody',
 };
 
 /** A zod-openapi hook. It changes each request validation failure into a 400 problem+json response. */
@@ -64,6 +85,5 @@ export const validationHook = (
   if (result.success) return undefined;
   const issue = result.error.issues[0];
   const field = String(issue?.path[0] ?? '');
-  const problem = FIELD_PROBLEMS[field] ?? { slug: 'invalidRequest', title: 'Invalid request' };
-  return problemResponse(c, 400, problem.slug, problem.title, issue?.message);
+  return problemResponse(c, FIELD_PROBLEMS[field] ?? 'invalidRequest', issue?.message);
 };
