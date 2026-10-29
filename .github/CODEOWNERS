@@ -1,5 +1,6 @@
-# Trusted committers review everything by default; replace with real teams.
-*                       @scouting/api-trusted-committers
-/apps/api/src/platform/ @scouting/api-platform
-/openapi/               @scouting/api-platform
-/infra/                 @scouting/api-platform
+# Trusted committers review all changes by default. The platform team also owns the shared platform layer,
+# the OpenAPI contract, and the infrastructure. Both teams need write access to the repository.
+*                       @OpenSourceScouting/api-trusted-committers
+/apps/api/src/platform/ @OpenSourceScouting/api-platform
+/openapi/               @OpenSourceScouting/api-platform
+/infra/                 @OpenSourceScouting/api-platform
