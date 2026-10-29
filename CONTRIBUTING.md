@@ -23,16 +23,27 @@ contract before you start.
 5. **Only add to the database schema.** The code and the schema deploy at different times. A migration must
    work with the code that is deployed: add tables or columns, but do not delete or rename them in the same
    release.
-6. **Use Conventional Commits with a body.** Start the header with a type, for example `feat:`, `fix:`, or
-   `docs:`. The body is required: it explains why you made the change. The `commit-msg` hook and the CI job
-   `commit-messages` reject other messages (see `commitlint.config.js`). `npm install` installs the hook. For
-   example:
+6. **Use Conventional Commits with a body.** The team squash merges each pull request. The pull request title
+   becomes the commit header, and the pull request body becomes the commit body. Thus:
+   - Write the pull request title as a Conventional Commits header, for example
+     `fix(auth): require exp on sign-in tokens`.
+   - Write the pull request body as the reason for the change. Replace the template text. Do not add a
+     checklist or other text that you do not want in the history.
 
-   ```text
-   fix(auth): require exp on sign-in tokens
+   The CI job `commit-messages` checks the title and the body (see `commitlint.config.js`), and runs again when
+   you edit them. The local `commit-msg` hook applies the same rules to your branch commits. `npm install`
+   installs the hook.
 
-   A token without an expiry stays valid forever if it leaks, so the API rejects it.
-   ```
+## Before you open a pull request
+
+Make sure that these items are true:
+
+- You wrote the tests first and saw them fail.
+- You ran `npm run generate` and committed `openapi/openapi.json` and the client types.
+- A contract change only adds to the contract, or it uses a new major version.
+- Each D1 migration only adds to the schema.
+- The feature code is in its own module in `src/modules/` and imports only from `platform/`.
+- `npm run ci` passes.
 
 ## Where to put tests
 
