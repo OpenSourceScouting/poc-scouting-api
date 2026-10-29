@@ -1,0 +1,45 @@
+name: Commit messages
+
+# Pull requests are squash merged: the pull request title becomes the commit header and the body becomes the
+# commit body. This job lints exactly that message, and reruns when the title or body is edited. On main, it
+# lints the commits that arrive (for example a squash merge, or a push by an administrator who bypasses the
+# ruleset). The job name "commit-messages" is a required status check in the ruleset for main.
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  commit-messages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Check the pull request title and body (the squash commit message)
+        if: github.event_name == 'pull_request'
+        # Untrusted input: pass the title and body through the environment, never through ${{ }} in the script.
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if printf '%s' "$PR_BODY" | grep -q 'Replace this paragraph'; then
+            echo "::error::Replace the template text in the pull request body with why the change is needed."
+            exit 1
+          fi
+          printf '%s\n\n%s\n' "$PR_TITLE" "$PR_BODY" | tr -d '\r' | npx commitlint --verbose
+      - name: Check the commits that arrived on main
+        if: github.event_name == 'push'
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: npx commitlint --from "$BEFORE" --to "$AFTER" --verbose || npx commitlint --last --verbose

@@ -14,15 +14,15 @@ This document does not explain why the team made each decision. For the reasons,
 The API answers three questions about one adult. Each check identifies the adult by the member ID and the last
 name together. The table gives each check:
 
-| Question                                                                      | Endpoint                                                                      | Access    | Module       |
-| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------- | ------------ |
-| Does this adult have current Youth Protection Training (YPT), and until when? | `POST /v1/adults/{scoutingMemberId}/ypt`                                      | Open      | `ypt`        |
-| Is this adult currently registered, and until when?                           | `POST /v1/adults/{scoutingMemberId}/membership`                               | Open      | `membership` |
-| Which positions does this adult hold in this organization, and until when?    | `POST /v1/adults/{scoutingMemberId}/organizations/{organizationId}/positions` | Signed in | `positions`  |
+| Question                                                                        | Endpoint                                                                      | Access    | Module       |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------- | ------------ |
+| Does this adult have current Safeguarding Youth Training (SYT), and until when? | `POST /v1/adults/{scoutingMemberId}/syt`                                      | Open      | `syt`        |
+| Is this adult currently registered, and until when?                             | `POST /v1/adults/{scoutingMemberId}/membership`                               | Open      | `membership` |
+| Which positions does this adult hold in this organization, and until when?      | `POST /v1/adults/{scoutingMemberId}/organizations/{organizationId}/positions` | Signed in | `positions`  |
 
 Each check sends `{ "lastName": "..." }` in a JSON body. Each valid request gets the status code `200` and a
 `status` of `current` or `notCurrent`. The cause of a `notCurrent` answer does not change the answer. This is
-the uniform answer rule (see [ADR 0006](adr/0006-adult-check-contract.md)). The platform stores only the fields
+the uniform answer rule (see [ADR 0006](adr/0006-adult-check-contract.md)). SYT replaced Youth Protection Training (YPT) in May 2025. The platform stores only the fields
 that these answers need, and it stores only adults.
 
 ## System context
@@ -225,7 +225,7 @@ The API makes answers and errors with these rules:
 ## Data model
 
 The database has four tables. The table `sync_state` has one row with `as_of`, the time of the last sync. The
-tables `ypt_status` and `membership_status` have one row for each adult, keyed by `member_id`. The table
+tables `syt_status` and `membership_status` have one row for each adult, keyed by `member_id`. The table
 `position_assignments` has one row for each position term, keyed by `member_id`, `organization_id`, and
 `position_code`. Each check table has `last_name_hash` and `expires_at`. The following diagram shows the
 columns:
@@ -236,7 +236,7 @@ erDiagram
     INTEGER id PK "always 1"
     TEXT as_of "when the dataset was last synced"
   }
-  ypt_status {
+  syt_status {
     TEXT member_id PK
     TEXT last_name_hash "HMAC of normalized last name"
     TEXT expires_at "RFC 3339, exclusive"
@@ -379,7 +379,7 @@ Tests are only at three agreed seams. A seam is the public interface that a test
 | OpenAPI contract | A comparison of the served contract with the committed contract, and the rules of the contract                               | `apps/api/test/contract.test.ts`                     |
 | Generated client | Type tests and runtime tests of `@scouting/api-client`                                                                       | `packages/api-client/src/client.test.ts`             |
 
-`test/open-adult-check.ts` is a shared test suite that each open check runs. Thus YPT and membership show that
+`test/open-adult-check.ts` is a shared test suite that each open check runs. Thus SYT and membership show that
 they follow the same contract, and they do not copy tests. The sign-in tests use a new key pair for each run.
 The Worker trusts the public key, and the tests sign tokens with the private key.
 

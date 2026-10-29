@@ -8,7 +8,7 @@ import { PROBLEM_BASE, PROBLEM_TYPES } from '../src/platform/problem';
 /* eslint-disable @typescript-eslint/no-explicit-any -- walking an arbitrary JSON document */
 type Doc = any;
 
-const OPERATIONS = ['checkYptStatus', 'checkMembership', 'checkPositions'];
+const OPERATIONS = ['checkSytStatus', 'checkMembership', 'checkPositions'];
 const SIGNED_IN = ['checkPositions'];
 
 let doc: Doc;
@@ -234,7 +234,7 @@ describe('OpenAPI contract', () => {
   });
 
   it('marks open checks as open and positions as signed in with positions:read', () => {
-    expect(op('checkYptStatus').security).toEqual([]);
+    expect(op('checkSytStatus').security).toEqual([]);
     expect(op('checkMembership').security).toEqual([]);
     expect(op('checkPositions').security).toEqual([{ scoutingSignIn: ['positions:read'] }]);
     expect(doc.components.securitySchemes.scoutingSignIn).toMatchObject({

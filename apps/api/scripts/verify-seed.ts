@@ -46,11 +46,11 @@ for (const adult of sampleAdults(now)) {
   const id = adult.id;
   // At most 1 + 2 + 1 + 1 + organizations checks per adult, inside the limit of 10 checks a minute per member ID.
   for (const name of [adult.lastName, ...(adult.sendAs ?? [])]) {
-    const ypt = await check(`/v1/adults/${id}/ypt`, name);
-    expect(`${id} ypt as "${name}"`, ypt.status, isCurrent(adult.ypt) ? 'current' : 'notCurrent');
+    const syt = await check(`/v1/adults/${id}/syt`, name);
+    expect(`${id} syt as "${name}"`, syt.status, isCurrent(adult.syt) ? 'current' : 'notCurrent');
   }
-  const wrong = await check(`/v1/adults/${id}/ypt`, 'Wrongname');
-  expect(`${id} ypt with a wrong name`, wrong.status, 'notCurrent');
+  const wrong = await check(`/v1/adults/${id}/syt`, 'Wrongname');
+  expect(`${id} syt with a wrong name`, wrong.status, 'notCurrent');
   const membership = await check(`/v1/adults/${id}/membership`, adult.lastName);
   expect(`${id} membership`, membership.status, isCurrent(adult.membership) ? 'current' : 'notCurrent');
 

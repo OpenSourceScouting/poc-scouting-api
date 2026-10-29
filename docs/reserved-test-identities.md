@@ -7,7 +7,7 @@ on each check, in each environment. This page is for developers who build or tes
 
 The table gives each identity and its answers:
 
-| Member ID   | Last name        | YPT        | Membership | Positions in `test-org-1`       |
+| Member ID   | Last name        | SYT        | Membership | Positions in `test-org-1`       |
 | ----------- | ---------------- | ---------- | ---------- | ------------------------------- |
 | `000000001` | `Testcurrent`    | current    | current    | `committeeMember`, `unitLeader` |
 | `000000002` | `Testnotcurrent` | notCurrent | notCurrent | none                            |

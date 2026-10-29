@@ -22,8 +22,8 @@ async function runCheck(values: Record<string, string>) {
   const path = { scoutingMemberId: values.memberId! };
   const body = { lastName: values.lastName! };
   switch (values.check) {
-    case 'ypt':
-      return client.POST('/v1/adults/{scoutingMemberId}/ypt', { params: { path }, body });
+    case 'syt':
+      return client.POST('/v1/adults/{scoutingMemberId}/syt', { params: { path }, body });
     case 'membership':
       return client.POST('/v1/adults/{scoutingMemberId}/membership', { params: { path }, body });
     default:

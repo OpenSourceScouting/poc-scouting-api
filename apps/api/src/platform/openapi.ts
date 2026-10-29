@@ -50,7 +50,7 @@ export const ProblemSchema = z
     }),
     instance: z.string().optional().openapi({
       description: 'The path of the request.',
-      example: '/v1/adults/abc/ypt',
+      example: '/v1/adults/abc/syt',
     }),
     requestId: z.string().optional().openapi({
       description: 'The request ID. Give it when you report a problem.',
@@ -95,7 +95,7 @@ export function checkResponses(
   options: {
     signedIn: boolean;
     examples: { current: object; notCurrent: object };
-    /** The operation path, for example `/v1/adults/{scoutingMemberId}/ypt`. It fills `instance` in the examples. */
+    /** The operation path, for example `/v1/adults/{scoutingMemberId}/syt`. It fills `instance` in the examples. */
     path: string;
   },
 ) {

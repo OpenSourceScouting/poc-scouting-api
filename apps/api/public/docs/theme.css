@@ -1,0 +1,85 @@
+/*
+ * Swagger UI colors from the public site of Scouting America (scouting.org theme variables). Colors only:
+ * no logos, fonts, or other branding. Loaded after swagger-ui.css, from this origin, so the docs CSP allows it.
+ */
+:root {
+  --sa-blue: #003f87;
+  --sa-navy: #1f4361;
+  --sa-link: #005696;
+  --sa-blue-light: #067eeb;
+  --sa-red: #ce1126;
+  --sa-gold: #ffb225;
+  --sa-text: #212121;
+  --sa-surface: #f8f9fa;
+}
+body {
+  margin: 0;
+  background: #ffffff;
+  border-top: 6px solid var(--sa-blue);
+}
+.swagger-ui .info .title,
+.swagger-ui .opblock-tag {
+  color: var(--sa-blue);
+}
+.swagger-ui .info .title small.version-stamp {
+  background-color: var(--sa-navy);
+}
+.swagger-ui .info a,
+.swagger-ui .markdown a,
+.swagger-ui .renderedMarkdown a {
+  color: var(--sa-link);
+}
+.swagger-ui .scheme-container {
+  background: var(--sa-surface);
+  box-shadow: none;
+  border-bottom: 3px solid var(--sa-gold);
+}
+/* All checks are POST operations. */
+.swagger-ui .opblock.opblock-post {
+  border-color: var(--sa-blue);
+  background: rgb(0 63 135 / 6%);
+}
+.swagger-ui .opblock.opblock-post .opblock-summary {
+  border-color: var(--sa-blue);
+}
+.swagger-ui .opblock.opblock-post .opblock-summary-method {
+  background: var(--sa-blue);
+}
+.swagger-ui .opblock.opblock-post .tab-header .tab-item.active h4 span::after {
+  background: var(--sa-blue);
+}
+.swagger-ui .btn.execute {
+  background-color: var(--sa-blue);
+  border-color: var(--sa-blue);
+}
+.swagger-ui .btn.execute:hover {
+  background-color: var(--sa-navy);
+}
+.swagger-ui .btn.authorize {
+  color: var(--sa-blue);
+  border-color: var(--sa-blue);
+}
+.swagger-ui .btn.authorize svg {
+  fill: var(--sa-blue);
+}
+.swagger-ui .btn.cancel {
+  color: var(--sa-red);
+  border-color: var(--sa-red);
+}
+.swagger-ui .response-col_status {
+  color: var(--sa-text);
+}
+.swagger-ui :focus-visible {
+  outline: 3px solid var(--sa-blue-light);
+  outline-offset: 2px;
+}
+.swagger-ui .btn.authorize svg path {
+  fill: var(--sa-blue);
+}
+/* Inline code in the descriptions (Swagger UI default is purple). */
+.swagger-ui .info code,
+.swagger-ui .markdown code,
+.swagger-ui .renderedMarkdown code {
+  color: var(--sa-navy);
+  background: var(--sa-surface);
+}

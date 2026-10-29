@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/v1/adults/{scoutingMemberId}/ypt": {
+    "/v1/adults/{scoutingMemberId}/syt": {
         parameters: {
             query?: never;
             header?: never;
@@ -13,8 +13,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Checks whether an adult has current Youth Protection Training (YPT), and until when */
-        post: operations["checkYptStatus"];
+        /** Checks whether an adult has current Safeguarding Youth Training (SYT), and until when */
+        post: operations["checkSytStatus"];
         delete?: never;
         options?: never;
         head?: never;
@@ -106,7 +106,7 @@ export interface components {
             detail?: string;
             /**
              * @description The path of the request.
-             * @example /v1/adults/abc/ypt
+             * @example /v1/adults/abc/syt
              */
             instance?: string;
             /**
@@ -160,7 +160,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    checkYptStatus: {
+    checkSytStatus: {
         parameters: {
             query?: never;
             header?: never;

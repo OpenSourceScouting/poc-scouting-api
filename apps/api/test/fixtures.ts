@@ -24,8 +24,8 @@ export async function givenSyncedAt(asOf = AS_OF): Promise<void> {
   await env.DB.prepare('INSERT OR REPLACE INTO sync_state (id, as_of) VALUES (1, ?)').bind(asOf).run();
 }
 
-export async function givenYpt(memberId: string, normalizedLastName: string, expiresAt: string): Promise<void> {
-  await env.DB.prepare('INSERT OR REPLACE INTO ypt_status (member_id, last_name_hash, expires_at) VALUES (?, ?, ?)')
+export async function givenSyt(memberId: string, normalizedLastName: string, expiresAt: string): Promise<void> {
+  await env.DB.prepare('INSERT OR REPLACE INTO syt_status (member_id, last_name_hash, expires_at) VALUES (?, ?, ?)')
     .bind(memberId, await hashOfNormalized(normalizedLastName), expiresAt)
     .run();
 }

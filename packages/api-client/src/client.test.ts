@@ -12,7 +12,7 @@ const answer: CheckAnswer = {
 };
 
 describe('@scouting/api-client', () => {
-  it('POSTs the YPT check with the member ID in the path and the last name only in the JSON body', async () => {
+  it('POSTs the SYT check with the member ID in the path and the last name only in the JSON body', async () => {
     const calls: { method: string; url: string; contentType: string | null; body: unknown }[] = [];
     const client = createScoutingClient({
       baseUrl: 'https://api.test',
@@ -27,7 +27,7 @@ describe('@scouting/api-client', () => {
       },
     });
 
-    const { data } = await client.POST('/v1/adults/{scoutingMemberId}/ypt', {
+    const { data } = await client.POST('/v1/adults/{scoutingMemberId}/syt', {
       params: { path: { scoutingMemberId: '123456789' } },
       body: { lastName: "O'Brien" },
     });
@@ -35,7 +35,7 @@ describe('@scouting/api-client', () => {
     expect(calls).toEqual([
       {
         method: 'POST',
-        url: 'https://api.test/v1/adults/123456789/ypt',
+        url: 'https://api.test/v1/adults/123456789/syt',
         contentType: 'application/json',
         body: { lastName: "O'Brien" },
       },
@@ -45,9 +45,9 @@ describe('@scouting/api-client', () => {
   });
 
   it('exposes no way to send the last name in a URL', () => {
-    type YptQuery = paths['/v1/adults/{scoutingMemberId}/ypt']['post']['parameters']['query'];
+    type SytQuery = paths['/v1/adults/{scoutingMemberId}/syt']['post']['parameters']['query'];
     // Generated as `query?: never`: nothing can be supplied there.
-    expectTypeOf<YptQuery>().toEqualTypeOf<undefined>();
+    expectTypeOf<SytQuery>().toEqualTypeOf<undefined>();
   });
 
   it('accepts unknown status values without type errors (open enum)', () => {
