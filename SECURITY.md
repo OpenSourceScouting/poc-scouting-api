@@ -4,7 +4,13 @@ This page tells you how to report a security problem and which rules protect per
 
 ## Report a vulnerability
 
-Send the report privately to the trusted committers in `.github/CODEOWNERS`. Do not open a public issue.
+Report the problem privately with GitHub private vulnerability reporting:
+
+1. Open the [new security advisory form](https://github.com/OpenSourceScouting/poc-scouting-api/security/advisories/new).
+   You can also go to the **Security** tab and click **Report a vulnerability**.
+2. Describe the problem and how to reproduce it.
+
+Do not open a public issue. The trusted committers in `.github/CODEOWNERS` receive the report.
 
 ## Rules for personal data
 

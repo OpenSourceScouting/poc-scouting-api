@@ -16,7 +16,7 @@ Architecture: `docs/architecture.md`. API rules: `docs/api-guidelines.md`. Decis
 
 ## Rules that are easy to break
 
-- Commits: Conventional Commits with a required body explaining why (commitlint; `.githooks/commit-msg` and CI job `commit-messages`)
+- Commits: Conventional Commits with a required body explaining why. PRs are squash merged: the PR title is the header and the PR body is the body, so write both that way (commitlint in `.githooks/commit-msg` and the `commit-messages` workflow)
 
 - Modules (`apps/api/src/modules/*`) import only `src/platform/`, never each other (ESLint enforces)
 - `/v1` is POST-only with JSON bodies; no query parameters anywhere (Redocly rules + contract tests enforce)
