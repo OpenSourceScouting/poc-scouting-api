@@ -17,6 +17,26 @@ describe('platform', () => {
     expect(await res.json()).toEqual({ status: 'ok', environment: 'test' });
   });
 
+  it('sends browsers at the root to the interactive docs', async () => {
+    const res = await api('/', { headers: { Accept: 'text/html,application/xhtml+xml' } });
+
+    expect(res.status).toBe(302);
+    expect(res.headers.get('Location')).toBe('/docs');
+  });
+
+  it('answers API clients at the root with links to the docs, the contract, and the health check', async () => {
+    const res = await api('/');
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      name: 'Scouting API',
+      version: '0.1.0',
+      docs: '/docs',
+      openapi: '/openapi.json',
+      health: '/health',
+    });
+  });
+
   it('answers unknown paths with an RFC 9457 problem', async () => {
     const res = await api('/v1/does-not-exist', {
       method: 'POST',

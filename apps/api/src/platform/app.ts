@@ -133,6 +133,13 @@ export function createApp(modules: readonly FeatureModule[]): OpenAPIHono<AppEnv
 
   app.get('/health', (c) => c.json({ status: 'ok', environment: c.env.ENVIRONMENT }));
 
+  // The root is not part of the contract. Browsers go to the docs; API clients get links.
+  app.get('/', (c) => {
+    if (c.req.header('Accept')?.includes('text/html')) return c.redirect('/docs', 302);
+    const { title, version } = openApiConfig(modules).info;
+    return c.json({ name: title, version, docs: '/docs', openapi: '/openapi.json', health: '/health' });
+  });
+
   for (const module of modules) {
     app.route(module.basePath, module.routes);
   }
