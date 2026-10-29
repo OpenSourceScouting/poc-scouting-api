@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- inspecting arbitrary log JSON */
 import { env } from 'cloudflare:test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { FUTURE, givenSyncedAt, givenYpt, hashOfNormalized } from './fixtures';
+import { FUTURE, givenSyncedAt, givenSyt, hashOfNormalized } from './fixtures';
 import { api } from './http';
 
 const PROBLEMS = 'https://api.example.scouting.org/problems';
@@ -65,7 +65,7 @@ describe('platform', () => {
   );
 
   it.each(['GET', 'PUT', 'PATCH', 'DELETE', 'HEAD'])('refuses %s on API endpoints with Allow: POST', async (method) => {
-    const res = await api('/v1/adults/123456789/ypt', { method });
+    const res = await api('/v1/adults/123456789/syt', { method });
 
     expect(res.status).toBe(405);
     expect(res.headers.get('Allow')).toBe('POST, OPTIONS');
@@ -73,14 +73,14 @@ describe('platform', () => {
   });
 
   it('requires a JSON body on API endpoints (415 otherwise)', async () => {
-    const res = await api('/v1/adults/123456789/ypt', { method: 'POST', body: 'lastName=Rivera' });
+    const res = await api('/v1/adults/123456789/syt', { method: 'POST', body: 'lastName=Rivera' });
 
     expect(res.status).toBe(415);
     expect(await res.json()).toMatchObject({ type: `${PROBLEMS}/unsupportedMediaType` });
   });
 
   it('rejects malformed JSON as a 400 problem', async () => {
-    const res = await api('/v1/adults/123456789/ypt', {
+    const res = await api('/v1/adults/123456789/syt', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: '{"lastName": ',
@@ -91,7 +91,7 @@ describe('platform', () => {
   });
 
   it('rejects bodies over 1 KiB with 413', async () => {
-    const res = await api('/v1/adults/123456789/ypt', {
+    const res = await api('/v1/adults/123456789/syt', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lastName: 'x'.repeat(2048) }),
@@ -164,11 +164,11 @@ describe('per-member-ID rate limit', () => {
   it('limits checks about one member ID across all checks, so names cannot be guessed from many IPs', async () => {
     // The test limit is 50 a minute; alternate checks to show the counter is shared.
     for (let i = 0; i < 50; i++) {
-      const res = await check(i % 2 ? '/v1/adults/900000001/ypt' : '/v1/adults/900000001/membership');
+      const res = await check(i % 2 ? '/v1/adults/900000001/syt' : '/v1/adults/900000001/membership');
       expect(res.status, `request ${i + 1}`).toBe(200);
     }
 
-    const limited = await check('/v1/adults/900000001/ypt');
+    const limited = await check('/v1/adults/900000001/syt');
 
     expect(limited.status).toBe(429);
     expect(limited.headers.get('Retry-After')).toBe('60');
@@ -176,7 +176,7 @@ describe('per-member-ID rate limit', () => {
   });
 
   it('does not limit other member IDs', async () => {
-    const res = await check('/v1/adults/900000002/ypt');
+    const res = await check('/v1/adults/900000002/syt');
 
     expect(res.status).toBe(200);
   });
@@ -207,14 +207,14 @@ describe('OpenTelemetry', () => {
   beforeEach(() => givenSyncedAt());
 
   it('writes one OTel-shaped access log record per request with semantic-convention attributes', async () => {
-    const record = await accessLog('/v1/adults/123456789/ypt', check('Rivera', { 'X-Request-Id': 'r-1' }));
+    const record = await accessLog('/v1/adults/123456789/syt', check('Rivera', { 'X-Request-Id': 'r-1' }));
 
     expect(record).toMatchObject({
       severity_text: 'INFO',
       body: 'request',
       attributes: {
         'http.request.method': 'POST',
-        'url.path': '/v1/adults/123456789/ypt',
+        'url.path': '/v1/adults/123456789/syt',
         'http.response.status_code': 200,
         'request.id': 'r-1',
       },
@@ -224,10 +224,10 @@ describe('OpenTelemetry', () => {
   });
 
   it('records explicit, non-reversible abuse signals for checks: a keyed name hash and the outcome', async () => {
-    await givenYpt('123456789', 'rivera', FUTURE);
-    const match = await accessLog('/v1/adults/123456789/ypt', check('Rivera'));
-    const sameNameOtherForm = await accessLog('/v1/adults/123456789/ypt', check('RIVERA'));
-    const mismatch = await accessLog('/v1/adults/123456789/ypt', check('Smith'));
+    await givenSyt('123456789', 'rivera', FUTURE);
+    const match = await accessLog('/v1/adults/123456789/syt', check('Rivera'));
+    const sameNameOtherForm = await accessLog('/v1/adults/123456789/syt', check('RIVERA'));
+    const mismatch = await accessLog('/v1/adults/123456789/syt', check('Smith'));
 
     expect(match.attributes['check.last_name_hash']).toMatch(/^[0-9a-f]{64}$/);
     expect(sameNameOtherForm.attributes['check.last_name_hash']).toBe(match.attributes['check.last_name_hash']);
@@ -239,7 +239,7 @@ describe('OpenTelemetry', () => {
   });
 
   it('never writes the last name to any log record', async () => {
-    const records = await logsOf('/v1/adults/123456789/ypt', check('Zzyzx'));
+    const records = await logsOf('/v1/adults/123456789/syt', check('Zzyzx'));
 
     expect(JSON.stringify(records)).not.toMatch(/zzyzx/i);
   });
@@ -272,7 +272,7 @@ describe('OpenTelemetry', () => {
   it('correlates error logs with the trace', async () => {
     await env.DB.prepare('DELETE FROM sync_state').run(); // forces an internal error
     const records = await logsOf(
-      '/v1/adults/123456789/ypt',
+      '/v1/adults/123456789/syt',
       check('Rivera', { traceparent: `00-${TRACE_ID}-${PARENT_SPAN_ID}-01` }),
     );
 

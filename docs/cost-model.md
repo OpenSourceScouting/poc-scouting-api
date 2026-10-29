@@ -59,7 +59,7 @@ calculate the costs again.
 
 These rules also apply:
 
-- The checks are YPT, membership, and positions. The model gives them the same cost.
+- The checks are SYT, membership, and positions. The model gives them the same cost.
 - The AWS column uses the list price without the AWS free tier. The free tier depends on the age and type of
   the AWS account. For details, see [AWS free tier](#aws-free-tier).
 - AWS has no service that is equal to the Workers rate limiting binding. The AWS column uses a DynamoDB counter

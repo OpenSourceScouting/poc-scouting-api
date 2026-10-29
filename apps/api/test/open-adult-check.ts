@@ -14,7 +14,7 @@ export function checkRequest(body: unknown, headers: Record<string, string> = {}
 }
 
 /**
- * The shared contract every open adult check (YPT, membership, ...) must satisfy: one response
+ * The shared contract every open adult check (SYT, membership, ...) must satisfy: one response
  * shape, last-name matching, the uniform answer rule, validation problems, and no caching.
  * A new open check module proves conformance by calling this with its own path and fixture.
  */

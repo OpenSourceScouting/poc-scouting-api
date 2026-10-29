@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Scouting API proof of concept: three adult checks (YPT, membership, positions) on Cloudflare Workers + D1.
+Scouting API proof of concept: three adult checks (SYT, membership, positions) on Cloudflare Workers + D1.
 Architecture: `docs/architecture.md`. API rules: `docs/api-guidelines.md`. Decisions: `docs/adr/`.
 
 ## Commands (run from repo root)

@@ -18,8 +18,8 @@
   "security": [],
   "tags": [
     {
-      "name": "YPT",
-      "description": "The Youth Protection Training (YPT) status of one adult."
+      "name": "SYT",
+      "description": "The Safeguarding Youth Training (SYT) status of one adult. SYT replaced Youth Protection Training (YPT) in May 2025."
     },
     {
       "name": "Membership",
@@ -123,7 +123,7 @@
           "instance": {
             "type": "string",
             "description": "The path of the request.",
-            "example": "/v1/adults/abc/ypt"
+            "example": "/v1/adults/abc/syt"
           },
           "requestId": {
             "type": "string",
@@ -217,13 +217,13 @@
     "parameters": {}
   },
   "paths": {
-    "/v1/adults/{scoutingMemberId}/ypt": {
+    "/v1/adults/{scoutingMemberId}/syt": {
       "post": {
-        "operationId": "checkYptStatus",
+        "operationId": "checkSytStatus",
         "tags": [
-          "YPT"
+          "SYT"
         ],
-        "summary": "Checks whether an adult has current Youth Protection Training (YPT), and until when",
+        "summary": "Checks whether an adult has current Safeguarding Youth Training (SYT), and until when",
         "security": [],
         "parameters": [
           {
@@ -309,7 +309,7 @@
                       "title": "Invalid member ID",
                       "status": 400,
                       "detail": "scoutingMemberId must contain digits only.",
-                      "instance": "/v1/adults/abc/ypt",
+                      "instance": "/v1/adults/abc/syt",
                       "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
                     }
                   },
@@ -320,7 +320,7 @@
                       "title": "Invalid last name",
                       "status": 400,
                       "detail": "lastName is required.",
-                      "instance": "/v1/adults/123456789/ypt",
+                      "instance": "/v1/adults/123456789/syt",
                       "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
                     }
                   },
@@ -331,7 +331,7 @@
                       "title": "Invalid request body",
                       "status": 400,
                       "detail": "The request body is not valid JSON.",
-                      "instance": "/v1/adults/123456789/ypt",
+                      "instance": "/v1/adults/123456789/syt",
                       "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
                     }
                   }
@@ -355,7 +355,7 @@
                       "title": "Payload too large",
                       "status": 413,
                       "detail": "The maximum size of a request body is 1024 bytes.",
-                      "instance": "/v1/adults/123456789/ypt",
+                      "instance": "/v1/adults/123456789/syt",
                       "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
                     }
                   }
@@ -379,7 +379,7 @@
                       "title": "Unsupported media type",
                       "status": 415,
                       "detail": "Set Content-Type to application/json.",
-                      "instance": "/v1/adults/123456789/ypt",
+                      "instance": "/v1/adults/123456789/syt",
                       "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
                     }
                   }
@@ -410,7 +410,7 @@
                       "title": "Too many requests",
                       "status": 429,
                       "detail": "There were too many checks about this member ID. Wait, then send the check again.",
-                      "instance": "/v1/adults/123456789/ypt",
+                      "instance": "/v1/adults/123456789/syt",
                       "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
                     }
                   }
@@ -433,7 +433,7 @@
                       "type": "https://api.example.scouting.org/problems/internalError",
                       "title": "Internal server error",
                       "status": 500,
-                      "instance": "/v1/adults/123456789/ypt",
+                      "instance": "/v1/adults/123456789/syt",
                       "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
                     }
                   }
@@ -464,7 +464,7 @@
                       "title": "Service unavailable",
                       "status": 503,
                       "detail": "The API is closed for maintenance. Send the request again later.",
-                      "instance": "/v1/adults/123456789/ypt",
+                      "instance": "/v1/adults/123456789/syt",
                       "requestId": "3f2b8c1e-6a4d-4e9b-9c1a-7d5e2f8a0b61"
                     }
                   }

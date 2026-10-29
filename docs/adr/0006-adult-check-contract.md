@@ -8,7 +8,7 @@ Position - API One Pager" (draft for National IT).
 Version 1 has three checks about one adult (all `POST`, see ADR 0010). Each check identifies the adult by the
 member ID and the last name together:
 
-- YPT (module `ypt`)
+- SYT (module `syt`)
 - Membership (module `membership`)
 - Positions in one named organization (module `positions`)
 

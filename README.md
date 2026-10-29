@@ -11,11 +11,11 @@ Each check identifies one adult by two values: the member ID and the last name. 
 
 | Check      | Endpoint                                                                      | Access                                        |
 | ---------- | ----------------------------------------------------------------------------- | --------------------------------------------- |
-| YPT status | `POST /v1/adults/{scoutingMemberId}/ypt`                                      | Open                                          |
+| SYT status | `POST /v1/adults/{scoutingMemberId}/syt`                                      | Open                                          |
 | Membership | `POST /v1/adults/{scoutingMemberId}/membership`                               | Open                                          |
 | Positions  | `POST /v1/adults/{scoutingMemberId}/organizations/{organizationId}/positions` | Sign-in token with the `positions:read` scope |
 
-YPT means Youth Protection Training. Each check sends the last name in a JSON body, for example
+SYT means Safeguarding Youth Training. It replaced Youth Protection Training (YPT) in May 2025. Each check sends the last name in a JSON body, for example
 `{"lastName": "O'Brien"}`. The API never puts personal data in a URL.
 
 The API answers only about adults. Each valid request gets the status code `200` and an answer in the same
@@ -64,7 +64,7 @@ local D1 database on your computer.
 5. To make sure that the API works, send a check for a reserved test identity:
 
    ```sh
-   curl -X POST localhost:8787/v1/adults/000000001/ypt \
+   curl -X POST localhost:8787/v1/adults/000000001/syt \
      -H 'Content-Type: application/json' \
      -d '{"lastName":"Testcurrent"}'
    ```

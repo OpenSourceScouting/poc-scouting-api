@@ -15,7 +15,7 @@ Some cases use times relative to the moment that you seed. "Ends soon" means 1 h
 
 The table gives each adult in this group:
 
-| Member ID | Last name | Also matches | YPT | Membership | Positions | Use case |
+| Member ID | Last name | Also matches | SYT | Membership | Positions | Use case |
 | --- | --- | --- | --- | --- | --- | --- |
 | `000000001` | `Testcurrent` | none | current | current | unitLeader in `test-org-1` (current); committeeMember in `test-org-1` (current) | Current on every check, with two positions in test-org-1. |
 | `000000002` | `Testnotcurrent` | none | ended | ended | unitLeader in `test-org-1` (ended) | Not current on every check: all records ended. |
@@ -24,12 +24,12 @@ The table gives each adult in this group:
 
 The table gives each adult in this group:
 
-| Member ID | Last name | Also matches | YPT | Membership | Positions | Use case |
+| Member ID | Last name | Also matches | SYT | Membership | Positions | Use case |
 | --- | --- | --- | --- | --- | --- | --- |
 | `123456789` | `O'Brien` | `obrien`, `O’BRIEN` | current | current | unitLeader in `4f1c2a90` (current) | Straight apostrophe in the stored name; any case and a curly apostrophe match. |
 | `400000001` | `O’Connor` | `O'Connor` | current | current | none | Curly apostrophe in the stored name; a straight apostrophe matches. |
 | `400000002` | `D'Angelo` | `DANGELO` | current | current | none | Apostrophe after a single letter. |
-| `223456789` | `Peña` | `PENA` | ended | current | none | Accent: YPT ended, membership current. |
+| `223456789` | `Peña` | `PENA` | ended | current | none | Accent: SYT ended, membership current. |
 | `400000003` | `Nguyễn` | `Nguyen` | current | current | none | Two stacked diacritics on one letter. |
 | `400000004` | `Müller-Lüdenscheidt` | `mullerludenscheidt` | current | current | none | Umlauts and a hyphen together. |
 | `323456789` | `Smith-Jones` | `Smith Jones` | current | current | committeeMember in `4f1c2a90` (current); unitCommissioner in `district-77` (current) | Hyphen; a space matches. Positions in two organizations. |
@@ -47,33 +47,33 @@ The table gives each adult in this group:
 
 The table gives each adult in this group:
 
-| Member ID | Last name | Also matches | YPT | Membership | Positions | Use case |
+| Member ID | Last name | Also matches | SYT | Membership | Positions | Use case |
 | --- | --- | --- | --- | --- | --- | --- |
-| `410000001` | `Rivera` | none | current | ended | none | YPT current, membership ended. |
-| `410000002` | `Okafor` | none | no record | current | none | Membership current, no YPT record (never trained). |
-| `410000003` | `Lindqvist` | none | current | no record | none | YPT current, no membership record. |
-| `410000004` | `Haddad` | none | ended | ended | none | YPT and membership both ended. |
-| `410000005` | `Tanaka` | none | current, ends soon | current | none | YPT ends 1 hour after you seed. Use it to test the end of a term. |
-| `410000006` | `Kowalski` | none | ended recently | current | none | YPT ended 1 hour before you seed. |
+| `410000001` | `Rivera` | none | current | ended | none | SYT current, membership ended. |
+| `410000002` | `Okafor` | none | no record | current | none | Membership current, no SYT record (never trained). |
+| `410000003` | `Lindqvist` | none | current | no record | none | SYT current, no membership record. |
+| `410000004` | `Haddad` | none | ended | ended | none | SYT and membership both ended. |
+| `410000005` | `Tanaka` | none | current, ends soon | current | none | SYT ends 1 hour after you seed. Use it to test the end of a term. |
+| `410000006` | `Kowalski` | none | ended recently | current | none | SYT ended 1 hour before you seed. |
 | `410000007` | `Abernathy` | none | current | current, ends soon | none | Membership ends 30 days after you seed. |
 
 ## Positions
 
 The table gives each adult in this group:
 
-| Member ID | Last name | Also matches | YPT | Membership | Positions | Use case |
+| Member ID | Last name | Also matches | SYT | Membership | Positions | Use case |
 | --- | --- | --- | --- | --- | --- | --- |
 | `420000001` | `Fitzgerald` | none | current | current | unitLeader in `unit-1001` (current); committeeMember in `unit-1001` (current); charteredOrganizationRepresentative in `unit-1001` (ended) | Three positions in one unit; one term ended, so the answer lists two. |
 | `420000002` | `Achebe` | none | current | current | assistantUnitLeader in `unit-1002` (current); unitCommissioner in `district-12` (current); committeeMember in `council-500` (current) | Positions in a unit, a district, and a council. Each organization needs its own check. |
 | `420000003` | `Moreau` | none | current | current | unitLeader in `unit-1001` (ended); committeeMember in `unit-1001` (ended) | All position terms in the unit ended. |
-| `420000004` | `Castillo` | none | no record | no record | committeeMember in `unit-1002` (current) | A position, but no YPT or membership record. Each check reads only its own table. |
+| `420000004` | `Castillo` | none | no record | no record | committeeMember in `unit-1002` (current) | A position, but no SYT or membership record. Each check reads only its own table. |
 | `420000005` | `Petrov` | none | current | current | districtCommissioner in `district-12` (current, ends soon) | A district position that ends 1 hour after you seed. |
 
 ## Member ID formats
 
 The table gives each adult in this group:
 
-| Member ID | Last name | Also matches | YPT | Membership | Positions | Use case |
+| Member ID | Last name | Also matches | SYT | Membership | Positions | Use case |
 | --- | --- | --- | --- | --- | --- | --- |
 | `000000123` | `Leadingzero` | none | current | current | none | Leading zeros are part of the ID: 123 and 00000123 are different IDs. |
 | `999999999999` | `Maxlength` | none | current | current | none | The longest member ID that the API accepts (12 digits). |

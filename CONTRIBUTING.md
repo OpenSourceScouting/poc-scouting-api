@@ -50,9 +50,9 @@ internal parts of a repository.
 ## Add a check module
 
 1. Create the folder `apps/api/src/modules/CHECK/` with the files `repository.ts`, `routes.ts`, `index.ts`, and
-   `CHECK.test.ts`. Replace `CHECK` with the name of the check, for example `ypt`. For the smallest example, see
-   `ypt/`. For a signed-in check that returns a list, see `positions/`.
-2. Add a fixture function for the new table in `apps/api/test/fixtures.ts`, for example `givenYpt`.
+   `CHECK.test.ts`. Replace `CHECK` with the name of the check, for example `syt`. For the smallest example, see
+   `syt/`. For a signed-in check that returns a list, see `positions/`.
+2. Add a fixture function for the new table in `apps/api/test/fixtures.ts`, for example `givenSyt`.
 3. Write the test first. An open check that reads one record needs only this test:
 
    ```ts

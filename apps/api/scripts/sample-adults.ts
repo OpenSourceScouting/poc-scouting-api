@@ -27,7 +27,7 @@ export interface SampleAdult {
   /** The use case, in one sentence. */
   useCase: string;
   group: string;
-  ypt?: string;
+  syt?: string;
   membership?: string;
   positions?: [organizationId: string, positionCode: string, expiresAt: string][];
 }
@@ -44,7 +44,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '000000001',
       lastName: 'Testcurrent',
       useCase: 'Current on every check, with two positions in test-org-1.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
       positions: [
         ['test-org-1', 'unitLeader', LATER],
@@ -56,7 +56,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '000000002',
       lastName: 'Testnotcurrent',
       useCase: 'Not current on every check: all records ended.',
-      ypt: ENDED,
+      syt: ENDED,
       membership: ENDED,
       positions: [['test-org-1', 'unitLeader', ENDED]],
     },
@@ -68,7 +68,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: "O'Brien",
       sendAs: ['obrien', 'O’BRIEN'],
       useCase: 'Straight apostrophe in the stored name; any case and a curly apostrophe match.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
       positions: [['4f1c2a90', 'unitLeader', LATER]],
     },
@@ -78,7 +78,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'O’Connor',
       sendAs: ["O'Connor"],
       useCase: 'Curly apostrophe in the stored name; a straight apostrophe matches.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -87,7 +87,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: "D'Angelo",
       sendAs: ['DANGELO'],
       useCase: 'Apostrophe after a single letter.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -95,8 +95,8 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '223456789',
       lastName: 'Peña',
       sendAs: ['PENA'],
-      useCase: 'Accent: YPT ended, membership current.',
-      ypt: ENDED,
+      useCase: 'Accent: SYT ended, membership current.',
+      syt: ENDED,
       membership: LATER,
     },
     {
@@ -105,7 +105,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'Nguyễn',
       sendAs: ['Nguyen'],
       useCase: 'Two stacked diacritics on one letter.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -114,7 +114,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'Müller-Lüdenscheidt',
       sendAs: ['mullerludenscheidt'],
       useCase: 'Umlauts and a hyphen together.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -123,7 +123,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'Smith-Jones',
       sendAs: ['Smith Jones'],
       useCase: 'Hyphen; a space matches. Positions in two organizations.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
       positions: [
         ['4f1c2a90', 'committeeMember', LATER],
@@ -136,7 +136,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'van der Berg',
       sendAs: ['VanDerBerg'],
       useCase: 'A name with spaces; the same name without spaces matches.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -145,7 +145,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'Martin',
       sendAs: ['Martin Jr.', 'Martin, Jr'],
       useCase: 'The caller adds a suffix (Jr) that the source does not store.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -154,7 +154,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'King III',
       sendAs: ['King'],
       useCase: 'The source stores a suffix (III) that the caller leaves out.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -163,7 +163,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'St. James',
       sendAs: ['st james'],
       useCase: 'A period and a space.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -172,7 +172,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'Ng',
       sendAs: ['NG'],
       useCase: 'A short name of two letters.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -181,7 +181,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       lastName: 'II',
       sendAs: ['ii'],
       useCase: 'A whole name that looks like a suffix; the API does not remove it.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -189,7 +189,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '400000011',
       lastName: 'Wolfeschlegelsteinhausenbergerdorff',
       useCase: 'A long name.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -197,7 +197,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '400000012',
       lastName: 'Smith',
       useCase: 'A common name. Adult 400000013 has the same name and a different answer.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -205,7 +205,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '400000013',
       lastName: 'Smith',
       useCase: 'The same name as 400000012; the member ID decides the answer.',
-      ypt: ENDED,
+      syt: ENDED,
       membership: LATER,
     },
 
@@ -214,46 +214,46 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       group: 'Status and expiry',
       id: '410000001',
       lastName: 'Rivera',
-      useCase: 'YPT current, membership ended.',
-      ypt: LATER,
+      useCase: 'SYT current, membership ended.',
+      syt: LATER,
       membership: ENDED,
     },
     {
       group: 'Status and expiry',
       id: '410000002',
       lastName: 'Okafor',
-      useCase: 'Membership current, no YPT record (never trained).',
+      useCase: 'Membership current, no SYT record (never trained).',
       membership: LATER,
     },
     {
       group: 'Status and expiry',
       id: '410000003',
       lastName: 'Lindqvist',
-      useCase: 'YPT current, no membership record.',
-      ypt: LATER,
+      useCase: 'SYT current, no membership record.',
+      syt: LATER,
     },
     {
       group: 'Status and expiry',
       id: '410000004',
       lastName: 'Haddad',
-      useCase: 'YPT and membership both ended.',
-      ypt: ENDED,
+      useCase: 'SYT and membership both ended.',
+      syt: ENDED,
       membership: ENDED,
     },
     {
       group: 'Status and expiry',
       id: '410000005',
       lastName: 'Tanaka',
-      useCase: 'YPT ends 1 hour after you seed. Use it to test the end of a term.',
-      ypt: soon,
+      useCase: 'SYT ends 1 hour after you seed. Use it to test the end of a term.',
+      syt: soon,
       membership: LATER,
     },
     {
       group: 'Status and expiry',
       id: '410000006',
       lastName: 'Kowalski',
-      useCase: 'YPT ended 1 hour before you seed.',
-      ypt: justEnded,
+      useCase: 'SYT ended 1 hour before you seed.',
+      syt: justEnded,
       membership: LATER,
     },
     {
@@ -261,7 +261,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '410000007',
       lastName: 'Abernathy',
       useCase: 'Membership ends 30 days after you seed.',
-      ypt: LATER,
+      syt: LATER,
       membership: inThirtyDays,
     },
 
@@ -271,7 +271,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '420000001',
       lastName: 'Fitzgerald',
       useCase: 'Three positions in one unit; one term ended, so the answer lists two.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
       positions: [
         ['unit-1001', 'unitLeader', LATER],
@@ -284,7 +284,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '420000002',
       lastName: 'Achebe',
       useCase: 'Positions in a unit, a district, and a council. Each organization needs its own check.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
       positions: [
         ['unit-1002', 'assistantUnitLeader', LATER],
@@ -297,7 +297,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '420000003',
       lastName: 'Moreau',
       useCase: 'All position terms in the unit ended.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
       positions: [
         ['unit-1001', 'unitLeader', ENDED],
@@ -308,7 +308,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       group: 'Positions',
       id: '420000004',
       lastName: 'Castillo',
-      useCase: 'A position, but no YPT or membership record. Each check reads only its own table.',
+      useCase: 'A position, but no SYT or membership record. Each check reads only its own table.',
       positions: [['unit-1002', 'committeeMember', LATER]],
     },
     {
@@ -316,7 +316,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '420000005',
       lastName: 'Petrov',
       useCase: 'A district position that ends 1 hour after you seed.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
       positions: [['district-12', 'districtCommissioner', soon]],
     },
@@ -327,7 +327,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '000000123',
       lastName: 'Leadingzero',
       useCase: 'Leading zeros are part of the ID: 123 and 00000123 are different IDs.',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -335,7 +335,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '999999999999',
       lastName: 'Maxlength',
       useCase: 'The longest member ID that the API accepts (12 digits).',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
     {
@@ -343,7 +343,7 @@ export function sampleAdults(now = Date.now()): SampleAdult[] {
       id: '7',
       lastName: 'Short',
       useCase: 'The shortest member ID that the API accepts (1 digit).',
-      ypt: LATER,
+      syt: LATER,
       membership: LATER,
     },
   ];
