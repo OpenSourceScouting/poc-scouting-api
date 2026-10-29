@@ -1,0 +1,53 @@
+{
+  "name": "scouting-api",
+  "private": true,
+  "description": "Example Scouting America API: Cloudflare Workers + D1, OpenAPI-first contract, sample frontend.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "setup": "npm install && npm run dev:setup -w @scouting/api && npm run db:reset -w @scouting/api && npm run generate",
+    "dev": "npm run dev -w @scouting/api",
+    "dev:web": "npm run dev -w @scouting/web",
+    "dev:all": "npm run dev -w @scouting/api & npm run dev -w @scouting/web",
+    "generate": "npm run openapi:export -w @scouting/api && npm run generate -w @scouting/api-client",
+    "lint": "eslint . && prettier --check . && npm run openapi:lint",
+    "format": "prettier --write .",
+    "openapi:lint": "redocly lint openapi/openapi.json",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "docs": "npm run docs:api && npm run docs:code",
+    "docs:api": "redocly build-docs openapi/openapi.json -o docs-site/api/index.html",
+    "docs:code": "typedoc",
+    "ci": "npm run generate && npm run lint && npm run typecheck && npm test && npm run build",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "lint:commits": "commitlint --last --verbose"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@eslint/js": "^10.0.1",
+    "@redocly/cli": "^2.72.0",
+    "eslint": "^10.13.0",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typedoc": "^0.28.20",
+    "typescript": "~5.9",
+    "typescript-eslint": "^8.72.1"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true,
+    "workerd@1.20260815.1": true,
+    "workerd@1.20261023.1": true,
+    "@scarf/scarf": false
+  }
+}

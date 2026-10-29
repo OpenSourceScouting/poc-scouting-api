@@ -1,0 +1,35 @@
+# Lint rules for every API spec in this repo. The rule/* entries encode our API guidelines
+# (docs/api-guidelines.md) so that every API stays consistent, not just this one.
+extends:
+  - recommended
+rules:
+  operation-4xx-response: error
+  operation-operationId: error
+  rule/no-query-parameters:
+    subject:
+      type: Parameter
+      property: in
+    assertions:
+      enum: [path, header]
+    message: 'No query parameters: URLs are logged everywhere. Put inputs in the JSON body (docs/api-guidelines.md).'
+    severity: error
+  rule/api-operations-are-post:
+    subject:
+      type: PathItem
+    assertions:
+      disallowed: [get, put, patch, delete, head, trace]
+    message: 'API operations are POST only, so personal data travels in bodies, never URLs (docs/api-guidelines.md).'
+    severity: error
+  rule/json-request-bodies-only:
+    subject:
+      type: MediaTypesMap
+    where:
+      - subject:
+          type: RequestBody
+        assertions:
+          defined: true
+    assertions:
+      requireAny: [application/json]
+      disallowed: [application/x-www-form-urlencoded, multipart/form-data, text/plain]
+    message: 'Request bodies are application/json.'
+    severity: error

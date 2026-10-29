@@ -1,0 +1,4 @@
+#!/bin/sh
+# Rejects commit messages that are not Conventional Commits with a body that explains why.
+# Installed by `npm install` (the root "prepare" script sets core.hooksPath to .githooks).
+exec npx --no -- commitlint --edit "$1"

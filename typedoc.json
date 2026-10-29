@@ -1,0 +1,8 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "Scouting API code docs",
+  "entryPoints": ["packages/api-client/src/index.ts", "apps/api/src/platform/*.ts"],
+  "tsconfig": "typedoc.tsconfig.json",
+  "out": "docs-site/code",
+  "excludePrivate": true
+}

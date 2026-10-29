@@ -1,0 +1,5 @@
+cloudflare_account_id = "0123456789abcdef0123456789abcdef"
+# Zone that serves the content hostnames (Cloudflare dashboard > the domain > Overview > Zone ID).
+content_zone_id = "fedcba9876543210fedcba9876543210"
+# Optional: override the placeholder hostnames.
+# content_hostnames = { staging = "content-staging.example.org", production = "content.example.org" }

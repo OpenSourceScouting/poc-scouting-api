@@ -1,0 +1,5 @@
+{
+  // Open localhost links (e.g. http://localhost:8787/docs) in the system browser, not VS Code's
+  // integrated browser. Set explicitly because the default is controlled by a VS Code experiment.
+  "workbench.browser.openLocalhostLinks": false
+}

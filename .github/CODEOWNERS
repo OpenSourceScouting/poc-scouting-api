@@ -1,0 +1,5 @@
+# Trusted committers review everything by default; replace with real teams.
+*                       @scouting/api-trusted-committers
+/apps/api/src/platform/ @scouting/api-platform
+/openapi/               @scouting/api-platform
+/infra/                 @scouting/api-platform

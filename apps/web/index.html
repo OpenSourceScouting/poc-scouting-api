@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scouting API sample client</title>
+    <meta
+      name="description"
+      content="Sample client for the Scouting API proof of concept, using a TypeScript client auto-generated from the OpenAPI contract."
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Adult checks</h1>
+      <aside class="about" aria-label="About this page">
+        <p>
+          <strong>Sample client for the Scouting API proof of concept.</strong> This page is part of the
+          <code>scouting-api</code> repository (<code>apps/web</code>). It shows how a volunteer tool calls the API. It
+          is not a Scouting America product. All data behind it is fictional.
+        </p>
+        <p>
+          Each request goes through <code>@scouting/api-client</code>. This TypeScript client is
+          <strong>auto-generated</strong> by <code>npm run generate</code> from the OpenAPI contract of the repository
+          (<code>openapi/openapi.json</code>, version <code id="contract-version"></code>). If the contract changes, the
+          client and this page do not compile until they agree again.
+        </p>
+        <p>
+          This page calls <code id="api-url"></code>. <a id="docs-link">API docs</a> ·
+          <a id="spec-link">OpenAPI document</a>
+        </p>
+      </aside>
+      <form id="check">
+        <label
+          >Check
+          <select name="check">
+            <option value="ypt">YPT status</option>
+            <option value="membership">Membership</option>
+            <option value="positions">Positions (signed in)</option>
+          </select>
+        </label>
+        <label>Member ID <input name="memberId" required inputmode="numeric" value="000000001" /></label>
+        <label>Last name <input name="lastName" required value="Testcurrent" /></label>
+        <fieldset id="positions-fields" hidden>
+          <label>Organization ID <input name="organizationId" value="test-org-1" /></label>
+          <label>Sign-in token <input name="token" placeholder="npm run dev:token -w @scouting/api" /></label>
+        </fieldset>
+        <button type="submit">Check</button>
+      </form>
+      <p class="hint">
+        Reserved test identities: <code>000000001</code> with <code>Testcurrent</code>, and <code>000000002</code> with
+        <code>Testnotcurrent</code>. Each valid check gets 200. Read the field <code>status</code>.
+      </p>
+      <output id="result" aria-live="polite"></output>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

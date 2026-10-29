@@ -1,0 +1,79 @@
+// Wrangler owns the Worker code deployment. Long-lived resources (D1 databases, custom domains)
+// are owned by OpenTofu in infra/tofu; see docs/adr/0003-iac-split-opentofu-and-wrangler.md.
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "scouting-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  // OpenTelemetry (docs/adr/0008-opentelemetry.md). Native traces and invocation logs stay off: both record
+  // the full URL, and lastName is in the query string. The app writes OTel-shaped logs with W3C trace ids.
+  // To export over OTLP, create a destination in the dashboard and list it in "destinations".
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "invocation_logs": false, "destinations": [] },
+    "traces": { "enabled": false },
+  },
+  "upload_source_maps": true,
+  // Static files (the self-hosted Swagger UI docs). Free and served before the Worker; see scripts/vendor-docs.ts.
+  "assets": { "directory": "./public" },
+  "vars": {
+    "ENVIRONMENT": "local",
+    "OAUTH_ISSUER": "https://login.example.scouting.org",
+    "OAUTH_AUDIENCE": "https://api.example.scouting.org",
+  },
+  // Checks per member ID per minute, across all checks and callers (docs/adr/0009). Not inherited by envs.
+  "ratelimits": [{ "name": "MEMBER_RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }],
+  // Local development uses Miniflare's on-disk SQLite; the id below is only a local key.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "scouting-api-local",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "env": {
+    "staging": {
+      "name": "scouting-api-staging",
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "OAUTH_ISSUER": "https://login.example.scouting.org",
+        "OAUTH_AUDIENCE": "https://api.example.scouting.org",
+        "OAUTH_JWKS_URL": "https://login.example.scouting.org/.well-known/jwks.json",
+      },
+      "ratelimits": [
+        { "name": "MEMBER_RATE_LIMITER", "namespace_id": "1002", "simple": { "limit": 10, "period": 60 } },
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "scouting-api-staging",
+          // Replace with the staging id from: tofu -chdir=infra/tofu output d1_database_ids
+          "database_id": "REPLACE_WITH_TOFU_OUTPUT",
+          "migrations_dir": "migrations",
+        },
+      ],
+    },
+    "production": {
+      "name": "scouting-api-production",
+      "vars": {
+        "ENVIRONMENT": "production",
+        "OAUTH_ISSUER": "https://login.example.scouting.org",
+        "OAUTH_AUDIENCE": "https://api.example.scouting.org",
+        "OAUTH_JWKS_URL": "https://login.example.scouting.org/.well-known/jwks.json",
+      },
+      "ratelimits": [
+        { "name": "MEMBER_RATE_LIMITER", "namespace_id": "1003", "simple": { "limit": 10, "period": 60 } },
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "scouting-api-production",
+          // Replace with the production id from: tofu -chdir=infra/tofu output d1_database_ids
+          "database_id": "REPLACE_WITH_TOFU_OUTPUT",
+          "migrations_dir": "migrations",
+        },
+      ],
+    },
+  },
+}

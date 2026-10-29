@@ -1,0 +1,764 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Scouting API",
+    "version": "0.1.0",
+    "description": "This API answers questions about one adult. Each check identifies the adult by the member ID and\nthe last name together. This document is a draft for discussion, not a commitment. Version 0.1.0 is an\nunofficial alpha, and nothing in it is official Scouting America policy or service. The host name is a\nplaceholder.\n\n**Adults only.** The API does not store or answer about youth.\n\n**No personal data in URLs.** Each check is a `POST` request. The JSON body contains `lastName`. A URL contains\nonly identifiers. No operation has query parameters. The API does not return, store, or log `lastName`. Checks\nare safe and idempotent: they change nothing, so you can send a check again.\n\n**Uniform answer rule.** Each valid request gets a `200` answer in the same format. These cases all give\n`notCurrent` with `expiresAt` set to null: an unknown member, a wrong last name, a youth member, an expired\nrecord, and a wrong organization. The `positions` list is empty when it applies. A `404` occurs only for an\nunknown path.\n\n**Read an answer.** Read the field `status`, not the HTTP status code. A wrong last name is a valid question\nwith the answer `notCurrent`. It is not an error. `notCurrent` has three possible causes: the data does not\nmatch, the member ID is unknown, or the record is not current. The answer does not tell which cause applies.\nThus a check cannot show if an ID is real or who owns it. In your tool, tell people to examine the spelling of\nthe member ID and the last name. Tell the adult to sign in to my.scouting to see their own record.\n\n**Test identities.** Reserved test identities give the same answers on each check, in each environment. Member\nID `000000001` with last name `Testcurrent` is always `current`. Member ID `000000002` with last name\n`Testnotcurrent` is always `notCurrent`. Member IDs are strings, so leading zeros are part of the ID.\n\n**Last name matching.** The API normalizes the supplied name and the stored name in the same way. It removes\naccents and ignores case. It ignores all characters that are not letters or digits, for example spaces,\napostrophes, hyphens, periods, and commas. It also removes one suffix at the end (Jr, Sr, II, III, IV) if other\nwords remain.\n\n**Open enums.** An enum can get new values at any time. Your client must accept values that it does not know.\n\n**No cache.** Each answer has `Cache-Control: no-store`.\n\n**Methods.** Use `POST` or `OPTIONS` on `/v1`. Other methods get `405` with `Allow: POST, OPTIONS`. The body\nmust be `application/json` (otherwise `415`) and 1 KiB or less (otherwise `413`). The API ignores unknown\nbody fields.\n\n**Rate limits.** The CDN limits each client IP address, to about 60 requests each minute at first. The platform\nlimits each member ID to 10 checks each minute, from all checks and all callers. Both limits answer `429` with\n`Retry-After`. If your tool has no API key, send a `User-Agent` that gives the name of the tool and a contact\naddress.\n\n**Versions.** The path contains the major version. A new field or enum value does not break the contract. A\nbreaking change gets a new major version. The old version announces its end with the `Deprecation` header\n(RFC 9745) and the `Sunset` header (RFC 8594).",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.example.scouting.org",
+      "description": "Placeholder production host"
+    }
+  ],
+  "security": [],
+  "tags": [
+    {
+      "name": "YPT",
+      "description": "The Youth Protection Training (YPT) status of one adult."
+    },
+    {
+      "name": "Membership",
+      "description": "The registration status of one adult."
+    },
+    {
+      "name": "Positions",
+      "description": "The positions that one adult holds in one named organization."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "scoutingSignIn": {
+        "type": "oauth2",
+        "description": "Scouting America sign-in. Tools use the authorization code flow with PKCE. A tool never sees the password, and never asks for the session token of a different person. The URLs are placeholders.",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://login.example.scouting.org/oauth2/authorize",
+            "tokenUrl": "https://login.example.scouting.org/oauth2/token",
+            "scopes": {
+              "positions:read": "Lets the tool check which positions an adult holds in a named organization."
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "CheckAnswer": {
+        "type": "object",
+        "properties": {
+          "scoutingMemberId": {
+            "type": "string",
+            "description": "The member ID from the request.",
+            "example": "123456789"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "expiresAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "The first time when the answer is not true. It has a value only when status is current. Otherwise it is null.",
+            "example": "2027-05-15T05:00:00Z"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The time of the last sync from the Scouting America systems. It is one value for the full dataset.",
+            "example": "2026-10-28T14:05:00Z"
+          }
+        },
+        "required": [
+          "scoutingMemberId",
+          "status",
+          "expiresAt",
+          "asOf"
+        ]
+      },
+      "Status": {
+        "anyOf": [
+          {
+            "type": "string",
+            "enum": [
+              "current",
+              "notCurrent"
+            ]
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "An open enum: `current` or `notCurrent`. New values can occur. Treat an unknown value as `notCurrent`. `notCurrent` has three causes: the data does not match, the member is unknown, or the record is not current. The answer does not say which cause applies. Thus nobody can use it to find real member IDs or to learn who owns an ID."
+      },
+      "Problem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status"
+        ],
+        "description": "An error in the RFC 9457 Problem Details format."
+      },
+      "CheckRequest": {
+        "type": "object",
+        "properties": {
+          "lastName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Required check against the member ID. Matching ignores case, accents, spaces, apostrophes, hyphens, periods, commas, and one trailing suffix (Jr, Sr, II, III, IV). Never echoed or logged.",
+            "example": "O'Brien"
+          }
+        },
+        "required": [
+          "lastName"
+        ]
+      },
+      "PositionsAnswer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CheckAnswer"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "expiresAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time",
+                "description": "The latest end time of the listed positions. It is null when status is notCurrent.",
+                "example": "2027-05-15T05:00:00Z"
+              },
+              "organizationId": {
+                "type": "string",
+                "description": "The organization ID from the request.",
+                "example": "4f1c2a90"
+              },
+              "positions": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Position"
+                },
+                "description": "The current positions in the named organization, sorted by positionCode. When status is notCurrent, the list is empty, never null. The list never has pages."
+              }
+            },
+            "required": [
+              "organizationId",
+              "positions"
+            ]
+          }
+        ]
+      },
+      "Position": {
+        "type": "object",
+        "properties": {
+          "positionCode": {
+            "$ref": "#/components/schemas/PositionCode"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The end of this position term (exclusive).",
+            "example": "2027-05-15T05:00:00Z"
+          }
+        },
+        "required": [
+          "positionCode",
+          "expiresAt"
+        ]
+      },
+      "PositionCode": {
+        "type": "string",
+        "description": "A code from /reference/v1/positionCodes.json, which is published separately. This is an open enum: new codes can occur. Show an unknown code as an unknown position, and get the list again. A code is never renamed or used again for a different position.",
+        "example": "unitLeader"
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/v1/adults/{scoutingMemberId}/ypt": {
+      "post": {
+        "operationId": "checkYptStatus",
+        "tags": [
+          "YPT"
+        ],
+        "summary": "Checks whether an adult has current Youth Protection Training (YPT), and until when",
+        "security": [],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 12,
+              "pattern": "^\\d+$",
+              "description": "The Scouting America member ID. Digits only. It is a string, so leading zeros stay.",
+              "example": "123456789"
+            },
+            "required": true,
+            "description": "The Scouting America member ID. Digits only. It is a string, so leading zeros stay.",
+            "name": "scoutingMemberId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The answer is in `status`. Each valid request gets a 200, for each answer. Thus read `status`, not the HTTP status code. `notCurrent` has three possible causes. The member ID and the last name do not match the records, or the platform does not answer for the member ID (it never includes youth), or the record is not current. The answer does not say which cause applies (the uniform answer rule). In your tool, tell people to examine the spelling of the member ID and the last name. Tell the adult to sign in to my.scouting to see their own record.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always no-store. The API does not let caches keep answers.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-Id": {
+                "description": "The request ID for tracing. If the caller sends an ID, the API returns that ID.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "current": {
+                    "summary": "Current",
+                    "value": {
+                      "scoutingMemberId": "000000001",
+                      "status": "current",
+                      "expiresAt": "2030-01-01T05:00:00Z",
+                      "asOf": "2026-10-28T14:05:00Z"
+                    }
+                  },
+                  "notCurrent": {
+                    "summary": "Not current, no match, or unknown member",
+                    "description": "Examine the spelling of the member ID and the last name. `notCurrent` has three possible causes. The member ID and the last name do not match the records, or the platform does not answer for the member ID (it never includes youth), or the record is not current. The answer does not say which cause applies (the uniform answer rule). In your tool, tell people to examine the spelling of the member ID and the last name. Tell the adult to sign in to my.scouting to see their own record.",
+                    "value": {
+                      "scoutingMemberId": "000000002",
+                      "status": "notCurrent",
+                      "expiresAt": null,
+                      "asOf": "2026-10-28T14:05:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CheckAnswer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "The request body is larger than 1 KiB.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "The request body is not application/json.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests: from this client (CDN limit), or about this member ID (platform limit).",
+            "headers": {
+              "Retry-After": {
+                "description": "The number of seconds to wait before you send the request again.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Our fault.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The API is not available for a short time, for example during maintenance.",
+            "headers": {
+              "Retry-After": {
+                "description": "The number of seconds to wait before you send the request again.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/adults/{scoutingMemberId}/membership": {
+      "post": {
+        "operationId": "checkMembership",
+        "tags": [
+          "Membership"
+        ],
+        "summary": "Checks whether an adult is registered, and until when",
+        "security": [],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 12,
+              "pattern": "^\\d+$",
+              "description": "The Scouting America member ID. Digits only. It is a string, so leading zeros stay.",
+              "example": "123456789"
+            },
+            "required": true,
+            "description": "The Scouting America member ID. Digits only. It is a string, so leading zeros stay.",
+            "name": "scoutingMemberId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The answer is in `status`. Each valid request gets a 200, for each answer. Thus read `status`, not the HTTP status code. `notCurrent` has three possible causes. The member ID and the last name do not match the records, or the platform does not answer for the member ID (it never includes youth), or the record is not current. The answer does not say which cause applies (the uniform answer rule). In your tool, tell people to examine the spelling of the member ID and the last name. Tell the adult to sign in to my.scouting to see their own record.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always no-store. The API does not let caches keep answers.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-Id": {
+                "description": "The request ID for tracing. If the caller sends an ID, the API returns that ID.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "current": {
+                    "summary": "Current",
+                    "value": {
+                      "scoutingMemberId": "000000001",
+                      "status": "current",
+                      "expiresAt": "2030-01-01T05:00:00Z",
+                      "asOf": "2026-10-28T14:05:00Z"
+                    }
+                  },
+                  "notCurrent": {
+                    "summary": "Not current, no match, or unknown member",
+                    "description": "Examine the spelling of the member ID and the last name. `notCurrent` has three possible causes. The member ID and the last name do not match the records, or the platform does not answer for the member ID (it never includes youth), or the record is not current. The answer does not say which cause applies (the uniform answer rule). In your tool, tell people to examine the spelling of the member ID and the last name. Tell the adult to sign in to my.scouting to see their own record.",
+                    "value": {
+                      "scoutingMemberId": "000000002",
+                      "status": "notCurrent",
+                      "expiresAt": null,
+                      "asOf": "2026-10-28T14:05:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CheckAnswer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "The request body is larger than 1 KiB.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "The request body is not application/json.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests: from this client (CDN limit), or about this member ID (platform limit).",
+            "headers": {
+              "Retry-After": {
+                "description": "The number of seconds to wait before you send the request again.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Our fault.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The API is not available for a short time, for example during maintenance.",
+            "headers": {
+              "Retry-After": {
+                "description": "The number of seconds to wait before you send the request again.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/adults/{scoutingMemberId}/organizations/{organizationId}/positions": {
+      "post": {
+        "operationId": "checkPositions",
+        "tags": [
+          "Positions"
+        ],
+        "summary": "Lists the positions that an adult holds in one organization, and until when",
+        "security": [
+          {
+            "scoutingSignIn": [
+              "positions:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 12,
+              "pattern": "^\\d+$",
+              "description": "The Scouting America member ID. Digits only. It is a string, so leading zeros stay.",
+              "example": "123456789"
+            },
+            "required": true,
+            "description": "The Scouting America member ID. Digits only. It is a string, so leading zeros stay.",
+            "name": "scoutingMemberId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[A-Za-z0-9-]+$",
+              "description": "The identifier of a unit, district, or council.",
+              "example": "4f1c2a90"
+            },
+            "required": true,
+            "description": "The identifier of a unit, district, or council.",
+            "name": "organizationId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The answer is in `status`. Each valid request gets a 200, for each answer. Thus read `status`, not the HTTP status code. `notCurrent` has three possible causes. The member ID and the last name do not match the records, or the platform does not answer for the member ID (it never includes youth), or the record is not current. The answer does not say which cause applies (the uniform answer rule). In your tool, tell people to examine the spelling of the member ID and the last name. Tell the adult to sign in to my.scouting to see their own record.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always no-store. The API does not let caches keep answers.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-Id": {
+                "description": "The request ID for tracing. If the caller sends an ID, the API returns that ID.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "current": {
+                    "summary": "Current",
+                    "value": {
+                      "scoutingMemberId": "000000001",
+                      "organizationId": "test-org-1",
+                      "status": "current",
+                      "expiresAt": "2030-01-01T05:00:00Z",
+                      "positions": [
+                        {
+                          "positionCode": "committeeMember",
+                          "expiresAt": "2029-06-01T05:00:00Z"
+                        },
+                        {
+                          "positionCode": "unitLeader",
+                          "expiresAt": "2030-01-01T05:00:00Z"
+                        }
+                      ],
+                      "asOf": "2026-10-28T14:05:00Z"
+                    }
+                  },
+                  "notCurrent": {
+                    "summary": "Not current, no match, or unknown member",
+                    "description": "Examine the spelling of the member ID and the last name. `notCurrent` has three possible causes. The member ID and the last name do not match the records, or the platform does not answer for the member ID (it never includes youth), or the record is not current. The answer does not say which cause applies (the uniform answer rule). In your tool, tell people to examine the spelling of the member ID and the last name. Tell the adult to sign in to my.scouting to see their own record.",
+                    "value": {
+                      "scoutingMemberId": "000000002",
+                      "organizationId": "test-org-1",
+                      "status": "notCurrent",
+                      "expiresAt": null,
+                      "positions": [],
+                      "asOf": "2026-10-28T14:05:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PositionsAnswer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "An identifier or the body is not valid, or lastName is missing. The formats are public, so this error shows no data.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The sign-in token is missing, not valid, or expired.",
+            "headers": {
+              "WWW-Authenticate": {
+                "description": "An RFC 6750 Bearer challenge.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The token is valid, but this caller cannot make this check. The answer gives no data about the person.",
+            "headers": {
+              "WWW-Authenticate": {
+                "description": "An RFC 6750 Bearer challenge with error=\"insufficient_scope\".",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "The request body is larger than 1 KiB.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "The request body is not application/json.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests: from this client (CDN limit), or about this member ID (platform limit).",
+            "headers": {
+              "Retry-After": {
+                "description": "The number of seconds to wait before you send the request again.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Our fault.",
+            "headers": {},
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The API is not available for a short time, for example during maintenance.",
+            "headers": {
+              "Retry-After": {
+                "description": "The number of seconds to wait before you send the request again.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {}
+}

@@ -1,0 +1,25 @@
+# Backstage software catalog entry, so other teams can discover and consume this API.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: scouting-api
+  description: Example Scouting America API on Cloudflare Workers + D1.
+  annotations:
+    github.com/project-slug: scouting/scouting-api
+spec:
+  type: service
+  lifecycle: experimental
+  owner: api-platform
+  providesApis: [scouting-api-v1]
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: scouting-api-v1
+  description: Scouting API v1 contract.
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: api-platform
+  definition:
+    $text: ./openapi/openapi.json
