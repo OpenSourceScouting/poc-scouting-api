@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: oasdiff/oasdiff-action/breaking@v0.1.21
+      - uses: oasdiff/oasdiff-action/breaking@v0.1.23
         with:
           base: origin/${{ github.base_ref }}:openapi/openapi.json
           revision: HEAD:openapi/openapi.json
