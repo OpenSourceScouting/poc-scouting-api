@@ -34,13 +34,13 @@
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
     "@eslint/js": "^10.0.1",
-    "@redocly/cli": "^2.72.0",
-    "eslint": "^10.13.0",
-    "prettier": "^3.9.10",
+    "@redocly/cli": "^2.78.0",
+    "eslint": "^10.15.0",
+    "prettier": "^3.10.1",
     "tsx": "^4.23.15",
     "typedoc": "^0.28.20",
     "typescript": "~5.9",
-    "typescript-eslint": "^8.72.1"
+    "typescript-eslint": "^8.72.2"
   },
   "allowScripts": {
     "esbuild@0.28.1": true,
